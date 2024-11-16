@@ -14,6 +14,7 @@ Search: Search for songs, artists, or playlists.
 Responsive Design: Fully responsive and works across devices.
 
 Technologies Used
+
 Backend:
 *******
 Frontend:
