@@ -20,8 +20,4 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\SocialNetworkForMusician.Data.Models\SocialNetworkForMusician.Data.Models.csproj" />
-  </ItemGroup>
-
 </Project>

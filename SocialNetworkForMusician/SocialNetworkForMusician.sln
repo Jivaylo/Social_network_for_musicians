@@ -5,15 +5,13 @@ VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SocialNetworkForMusician", "SocialNetworkForMusician\SocialNetworkForMusician.csproj", "{E8A6E276-E106-4616-B396-E3B876417F7F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocialNetworkForMusician.Common", "SocialNetworkForMusician.Common\SocialNetworkForMusician.Common.csproj", "{EA5731AD-CFE6-4668-BC59-AF1C222D7B1B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SocialNetworkForMusician.Common", "SocialNetworkForMusician.Common\SocialNetworkForMusician.Common.csproj", "{EA5731AD-CFE6-4668-BC59-AF1C222D7B1B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocialNetworkForMusician.Data.Models", "SocialNetworkForMusician.Data.Models\SocialNetworkForMusician.Data.Models.csproj", "{372A51B5-CC11-4CD0-8C3C-DDA32C7156A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SocialNetworkForMusician.Data", "SocialNetworkForMusician.Data\SocialNetworkForMusician.Data.csproj", "{07499316-DE51-49B6-9A0A-63894FC7492A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocialNetworkForMusician.Data", "SocialNetworkForMusician.Data\SocialNetworkForMusician.Data.csproj", "{07499316-DE51-49B6-9A0A-63894FC7492A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SocialNetworkForMusician.Web.ViewModel", "SocialNetworkForMusician.Web.ViewModel\SocialNetworkForMusician.Web.ViewModel.csproj", "{B104331A-00F2-4637-88AD-13E60B9AD109}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocialNetworkForMusician.Web.ViewModel", "SocialNetworkForMusician.Web.ViewModel\SocialNetworkForMusician.Web.ViewModel.csproj", "{B104331A-00F2-4637-88AD-13E60B9AD109}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocialNetworkForMusician.UnitTests", "SocialNetworkForMusician.UnitTests\SocialNetworkForMusician.UnitTests.csproj", "{7B900C9A-9410-49C3-9381-C3EB2AAB58FF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SocialNetworkForMusician.UnitTests", "SocialNetworkForMusician.UnitTests\SocialNetworkForMusician.UnitTests.csproj", "{7B900C9A-9410-49C3-9381-C3EB2AAB58FF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +27,6 @@ Global
 		{EA5731AD-CFE6-4668-BC59-AF1C222D7B1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA5731AD-CFE6-4668-BC59-AF1C222D7B1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA5731AD-CFE6-4668-BC59-AF1C222D7B1B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{372A51B5-CC11-4CD0-8C3C-DDA32C7156A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{372A51B5-CC11-4CD0-8C3C-DDA32C7156A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{372A51B5-CC11-4CD0-8C3C-DDA32C7156A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{372A51B5-CC11-4CD0-8C3C-DDA32C7156A3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{07499316-DE51-49B6-9A0A-63894FC7492A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{07499316-DE51-49B6-9A0A-63894FC7492A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07499316-DE51-49B6-9A0A-63894FC7492A}.Release|Any CPU.ActiveCfg = Release|Any CPU
