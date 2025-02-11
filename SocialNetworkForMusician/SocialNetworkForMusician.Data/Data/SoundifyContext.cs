@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SocialNetworkForMusician.Data.Models.Entities;
 
 namespace SocialNetworkForMusician.Data
 {
-    public class SoundifyContext : DbContext
+    public class ApplicationDbContext : DbContext
     {
-        public SoundifyContext(DbContextOptions<SoundifyContext> options) : base(options) { }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
         public DbSet<User> Users { get; set; }
         public DbSet<Track> Tracks { get; set; }
