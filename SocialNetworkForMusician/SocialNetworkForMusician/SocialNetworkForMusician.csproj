@@ -15,4 +15,12 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.33" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SocialNetworkForMusician.Common\SocialNetworkForMusician.Common.csproj" />
+    <ProjectReference Include="..\SocialNetworkForMusician.Data.Models\SocialNetworkForMusician.Data.Models.csproj" />
+    <ProjectReference Include="..\SocialNetworkForMusician.Data\SocialNetworkForMusician.Data.csproj" />
+    <ProjectReference Include="..\SocialNetworkForMusician.UnitTests\SocialNetworkForMusician.UnitTests.csproj" />
+    <ProjectReference Include="..\SocialNetworkForMusician.Web.ViewModel\SocialNetworkForMusician.Web.ViewModel.csproj" />
+  </ItemGroup>
+
 </Project>

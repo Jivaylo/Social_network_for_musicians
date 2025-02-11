@@ -36,5 +36,6 @@ namespace SocialNetworkForMusician.Data.Models.Entities
         public ICollection<Track> Tracks { get; set; } = null!;
         public ICollection<Comment> Comments { get; set; } = null!;
         public ICollection<Like> Likes { get; set; } = null!;
+        public ICollection<Album> Albums { get; set; } = null!;
     }
 }
