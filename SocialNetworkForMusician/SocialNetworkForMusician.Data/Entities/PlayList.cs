@@ -16,18 +16,10 @@ namespace SocialNetworkForMusician.Data.Models.Entities
         [MaxLength(100)]
         public string Name { get; set; } = null!;
 
-        [MaxLength(255)]
-        public string Description { get; set; } = null!;
-
-        [Required]
-        public int UserId { get; set; } 
-
-        [Required]
-        public DateTime DateCreated { get; set; }
-
-
+        public int UserId { get; set; }
         public User User { get; set; } = null!;
-        public ICollection<Track> Tracks { get; set; } = null!;
+
+        public ICollection<Track> Tracks { get; set; } = new List<Track>();
     }
 
 }

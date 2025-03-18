@@ -12,13 +12,10 @@ namespace SocialNetworkForMusician.Data.Models.Entities
         [Key]
         public int LikeId { get; set; }
 
-        [Required]
-        public int UserId { get; set; } 
-
-        [Required]
-        public int TrackId { get; set; } 
-
+        public int UserId { get; set; }
         public User User { get; set; } = null!;
+
+        public int TrackId { get; set; }
         public Track Track { get; set; } = null!;
     }
 }
