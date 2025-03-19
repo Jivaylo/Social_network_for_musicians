@@ -1,25 +1,24 @@
-﻿using System;
+﻿using SocialNetworkForMusician.Data.Models.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SocialNetworkForMusician.Data.Models.Entities
+namespace SocialNetworkForMusician.Data.Entities
 {
     public class Comment
     {
         [Key]
-        public int CommentId { get; set; }
-
+        public int Id { get; set; }
         [Required]
-        [MaxLength(500)]
-        public string Content { get; set; } = null!;
-
-        public int UserId { get; set; }
-        public User User { get; set; } = null!;
-
-        public int TrackId { get; set; }
-        public Track Track { get; set; } = null!;
+        public string Content { get; set; }
+        [Required]
+        public string UserId { get; set; }
+        [Required]
+        public int SongId { get; set; }
+        public virtual User User { get; set; }
+        public virtual Song Song { get; set; }
     }
 }
