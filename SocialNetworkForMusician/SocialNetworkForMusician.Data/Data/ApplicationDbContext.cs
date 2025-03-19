@@ -1,10 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SocialNetworkForMusician.Data.Entities;
 using SocialNetworkForMusician.Data.Models.Entities;
 
 namespace SocialNetworkForMusician.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<User>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
@@ -23,9 +25,9 @@ namespace SocialNetworkForMusician.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Artist>()
-               .HasOne(a => a.User)
-               .WithOne()
-               .HasForeignKey<Artist>(a => a.Id);
+                .HasOne(a => a.User)
+                .WithOne()
+                .HasForeignKey<Artist>(a => a.UserId);
 
             modelBuilder.Entity<Rating>()
                 .HasOne(r => r.Song)

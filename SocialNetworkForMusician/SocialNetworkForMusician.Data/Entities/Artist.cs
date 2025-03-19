@@ -11,8 +11,10 @@ namespace SocialNetworkForMusician.Data.Entities
 {
     public class Artist
     {
-        [Key, ForeignKey("User")]
+        [Key]
         public string Id { get; set; }
+        [ForeignKey("User")]
+        public string UserId { get; set; }
         [Required]
         [MaxLength(100)]
         public string StageName { get; set; }
