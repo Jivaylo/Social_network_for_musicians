@@ -14,6 +14,6 @@ namespace SocialNetworkForMusician.Data.Models.Entities
 
     public class User : IdentityUser
     {
-        public bool IsArtist { get; set; }
+        public string FullName { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SocialNetworkForMusician.Data.Entities;
@@ -18,59 +18,30 @@ namespace SocialNetworkForMusician.Data
         public DbSet<Leaderboard> Leaderboards { get; set; }
         public DbSet<Genre> Genres { get; set; }
 
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
             base.OnModelCreating(modelBuilder);
 
-            
             modelBuilder.Entity<Artist>()
                 .HasOne(a => a.User)
                 .WithOne()
-                .HasForeignKey<Artist>(a => a.UserId)
-                .OnDelete(DeleteBehavior.Cascade); 
+                .HasForeignKey<Artist>(a => a.UserId);
 
-            
             modelBuilder.Entity<Rating>()
                 .HasOne(r => r.Song)
                 .WithMany(s => s.Ratings)
-                .HasForeignKey(r => r.SongId)
-                .OnDelete(DeleteBehavior.Restrict); 
-
-           
-            modelBuilder.Entity<Comment>()
-                .HasOne(c => c.Song)
-                .WithMany(s => s.Comments)
-                .HasForeignKey(c => c.SongId)
-                .OnDelete(DeleteBehavior.Restrict); 
-
-          
-            modelBuilder.Entity<Comment>()
-                .HasOne(c => c.User)
-                .WithMany()
-                .HasForeignKey(c => c.UserId)
-                .OnDelete(DeleteBehavior.Restrict); 
-
-            
-            modelBuilder.Entity<Like>()
-                .HasOne(l => l.Song)
-                .WithMany(s => s.Likes)
-                .HasForeignKey(l => l.SongId)
-                .OnDelete(DeleteBehavior.Restrict); 
+                .HasForeignKey(r => r.SongId);
 
             modelBuilder.Entity<Leaderboard>()
                 .HasOne(l => l.Song)
                 .WithMany()
-                .HasForeignKey(l => l.SongId)
-                .OnDelete(DeleteBehavior.Restrict); 
+                .HasForeignKey(l => l.SongId);
 
-           
             modelBuilder.Entity<Genre>()
                 .HasMany(g => g.Songs)
                 .WithOne(s => s.Genre)
                 .HasForeignKey(s => s.GenreId)
-                .OnDelete(DeleteBehavior.Cascade); 
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
