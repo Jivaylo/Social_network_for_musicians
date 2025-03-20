@@ -7,57 +7,38 @@ namespace SocialNetworkForMusician.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
         }
 
-        // GET: /Account/Login
-        [HttpGet]
-        public IActionResult Login()
-        {
-            return View();
-        }
-
-        // POST: /Account/Login
-        [HttpPost]
-        public async Task<IActionResult> Login(LoginModel model)
-        {
-            if (!ModelState.IsValid) return View(model);
-
-            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
-
-            if (result.Succeeded)
-            {
-                return RedirectToAction("Index", "Home");
-            }
-
-            ModelState.AddModelError("", "Invalid login attempt.");
-            return View(model);
-        }
-
-        // GET: /Account/Register
         [HttpGet]
         public IActionResult Register()
         {
             return View();
         }
 
-        // POST: /Account/Register
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterModel model)
+        public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            if (!ModelState.IsValid) return View(model);
+            if (!ModelState.IsValid)
+                return View(model);
 
             var user = new User { UserName = model.Email, Email = model.Email };
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (result.Succeeded)
             {
+                // Assign the selected role
+                await _userManager.AddToRoleAsync(user, model.Role);
+
+                // Sign in and redirect
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 return RedirectToAction("Index", "Home");
             }
@@ -69,6 +50,7 @@ namespace SocialNetworkForMusician.Controllers
 
             return View(model);
         }
+
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
