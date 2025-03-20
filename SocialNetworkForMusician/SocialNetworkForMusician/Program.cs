@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SocialNetworkForMusician.Data;
 using SocialNetworkForMusician.Data.Models.Entities;
+using SocialNetworkForMusician.Data.SeedData;
 
 namespace SocialNetworkForMusician
 {
@@ -16,15 +17,13 @@ namespace SocialNetworkForMusician
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-            builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
-     .AddRoles<IdentityRole>() // Adding role management
-     .AddEntityFrameworkStores<ApplicationDbContext>();
-
-            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            builder.Services.AddIdentity<User, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+     .AddEntityFrameworkStores<ApplicationDbContext>()
+     .AddDefaultTokenProviders();
             builder.Services.AddControllersWithViews();
          
             var app = builder.Build();
+          
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
