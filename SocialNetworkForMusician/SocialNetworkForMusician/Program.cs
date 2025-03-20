@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SocialNetworkForMusician.Data;
 using SocialNetworkForMusician.Data.Models.Entities;
+using SocialNetworkForMusician.Data.Repositories;
 using SocialNetworkForMusician.Data.SeedData;
 
 namespace SocialNetworkForMusician
@@ -21,7 +22,7 @@ namespace SocialNetworkForMusician
      .AddEntityFrameworkStores<ApplicationDbContext>()
      .AddDefaultTokenProviders();
             builder.Services.AddControllersWithViews();
-         
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
             var app = builder.Build();
           
 
