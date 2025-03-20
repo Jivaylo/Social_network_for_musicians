@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace T_shirt.Data.Models.Migrations
+namespace SocialNetworkForMusician.Models.Migrations
 {
     public partial class addedidentity : Migration
     {
