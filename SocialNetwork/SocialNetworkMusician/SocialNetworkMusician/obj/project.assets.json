@@ -663,10 +663,10 @@
           }
         }
       },
-      "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore/6.0.33": {
+      "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore/6.0.35": {
         "type": "package",
         "dependencies": {
-          "Microsoft.EntityFrameworkCore.Relational": "6.0.33"
+          "Microsoft.EntityFrameworkCore.Relational": "6.0.35"
         },
         "compile": {
           "lib/net6.0/Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.dll": {
@@ -3980,6 +3980,22 @@
         "runtime": {
           "lib/netstandard1.3/System.Xml.XDocument.dll": {}
         }
+      },
+      "SocialNetworkMusician.Data/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "dependencies": {
+          "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": "6.0.35",
+          "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "6.0.35",
+          "Microsoft.EntityFrameworkCore.SqlServer": "6.0.35",
+          "Microsoft.EntityFrameworkCore.Sqlite": "6.0.35"
+        },
+        "compile": {
+          "bin/placeholder/SocialNetworkMusician.Data.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/SocialNetworkMusician.Data.dll": {}
+        }
       }
     }
   },
@@ -4814,10 +4830,10 @@
         "microsoft.aspnetcore.cryptography.keyderivation.nuspec"
       ]
     },
-    "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore/6.0.33": {
-      "sha512": "fmdL7t2yzRxe1y+32iCM30geBBh4gzMopLIiEySWf0kb7Z1+5zcfSmPuGbRtlH44l8UZdKYeh7K+xqeDWT9mHQ==",
+    "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore/6.0.35": {
+      "sha512": "WeLp4OVyHy25HPlp+zsFypSDW3viMQ3AsxkAWZA2uHSrJMDeoyezfYLL9X4bVj20HkkuisvcjxmSj2vgSHORdQ==",
       "type": "package",
-      "path": "microsoft.aspnetcore.diagnostics.entityframeworkcore/6.0.33",
+      "path": "microsoft.aspnetcore.diagnostics.entityframeworkcore/6.0.35",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -4825,7 +4841,7 @@
         "THIRD-PARTY-NOTICES.TXT",
         "lib/net6.0/Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.dll",
         "lib/net6.0/Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.xml",
-        "microsoft.aspnetcore.diagnostics.entityframeworkcore.6.0.33.nupkg.sha512",
+        "microsoft.aspnetcore.diagnostics.entityframeworkcore.6.0.35.nupkg.sha512",
         "microsoft.aspnetcore.diagnostics.entityframeworkcore.nuspec"
       ]
     },
@@ -11104,17 +11120,24 @@
         "system.xml.xdocument.4.3.0.nupkg.sha512",
         "system.xml.xdocument.nuspec"
       ]
+    },
+    "SocialNetworkMusician.Data/1.0.0": {
+      "type": "project",
+      "path": "../SocialNetworkMusician.Data/SocialNetworkMusician.Data.csproj",
+      "msbuildProject": "../SocialNetworkMusician.Data/SocialNetworkMusician.Data.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net6.0": [
-      "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore >= 6.0.33",
+      "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore >= 6.0.35",
       "Microsoft.AspNetCore.Identity.EntityFrameworkCore >= 6.0.35",
       "Microsoft.AspNetCore.Identity.UI >= 6.0.35",
+      "Microsoft.EntityFrameworkCore.Design >= 6.0.35",
       "Microsoft.EntityFrameworkCore.SqlServer >= 6.0.35",
       "Microsoft.EntityFrameworkCore.Sqlite >= 6.0.35",
       "Microsoft.EntityFrameworkCore.Tools >= 6.0.35",
-      "Microsoft.VisualStudio.Web.CodeGeneration.Design >= 6.0.18"
+      "Microsoft.VisualStudio.Web.CodeGeneration.Design >= 6.0.18",
+      "SocialNetworkMusician.Data >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -11150,7 +11173,11 @@
       "frameworks": {
         "net6.0": {
           "targetAlias": "net6.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\User\\Documents\\SocialNetwork\\Social_network_for_musicians\\SocialNetwork\\SocialNetworkMusician\\SocialNetworkMusician.Data\\SocialNetworkMusician.Data.csproj": {
+              "projectPath": "C:\\Users\\User\\Documents\\SocialNetwork\\Social_network_for_musicians\\SocialNetwork\\SocialNetworkMusician\\SocialNetworkMusician.Data\\SocialNetworkMusician.Data.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
@@ -11170,13 +11197,19 @@
         "dependencies": {
           "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": {
             "target": "Package",
-            "version": "[6.0.33, )"
+            "version": "[6.0.35, )"
           },
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
             "target": "Package",
             "version": "[6.0.35, )"
           },
           "Microsoft.AspNetCore.Identity.UI": {
+            "target": "Package",
+            "version": "[6.0.35, )"
+          },
+          "Microsoft.EntityFrameworkCore.Design": {
+            "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+            "suppressParent": "All",
             "target": "Package",
             "version": "[6.0.35, )"
           },
