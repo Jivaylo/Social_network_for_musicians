@@ -74,21 +74,35 @@ namespace SocialNetworkMusician.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Create(TrackViewModel model)
+        public async Task<IActionResult> Create(TrackViewModel model, IFormFile MusicFile)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || MusicFile == null)
             {
                 ViewBag.Categories = new SelectList(_context.TrackCategories, "Id", "Name");
+                ModelState.AddModelError("", "Music file is required.");
                 return View(model);
             }
 
+           
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+            Directory.CreateDirectory(uploadsFolder); 
+
+            var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(MusicFile.FileName);
+            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await MusicFile.CopyToAsync(stream);
+            }
+
             var user = await _userManager.GetUserAsync(User);
+
             var track = new MusicTrack
             {
                 Id = Guid.NewGuid(),
                 Title = model.Title,
                 Description = model.Description,
-                FileUrl = model.FileUrl,
+                FileUrl = "/uploads/" + uniqueFileName,
                 CategoryId = model.CategoryId,
                 UploadedAt = DateTime.UtcNow,
                 UserId = user.Id
@@ -96,6 +110,7 @@ namespace SocialNetworkMusician.Controllers
 
             _context.MusicTracks.Add(track);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
     }
