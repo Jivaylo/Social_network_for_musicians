@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\User\\Documents\\Test.SocialNetwork\\SocialNetworkMusician\\SocialNetworkMusician.Data\\SocialNetworkMusician.Data.csproj": {}
+    "C:\\Users\\User\\Documents\\2024-2025\\SocialNetworkForMusicians\\Social_network_for_musicians\\SocialNetworkMusician.Data\\SocialNetworkMusician.Data.csproj": {}
   },
   "projects": {
-    "C:\\Users\\User\\Documents\\Test.SocialNetwork\\SocialNetworkMusician\\SocialNetworkMusician.Data\\SocialNetworkMusician.Data.csproj": {
+    "C:\\Users\\User\\Documents\\2024-2025\\SocialNetworkForMusicians\\Social_network_for_musicians\\SocialNetworkMusician.Data\\SocialNetworkMusician.Data.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\User\\Documents\\Test.SocialNetwork\\SocialNetworkMusician\\SocialNetworkMusician.Data\\SocialNetworkMusician.Data.csproj",
+        "projectUniqueName": "C:\\Users\\User\\Documents\\2024-2025\\SocialNetworkForMusicians\\Social_network_for_musicians\\SocialNetworkMusician.Data\\SocialNetworkMusician.Data.csproj",
         "projectName": "SocialNetworkMusician.Data",
-        "projectPath": "C:\\Users\\User\\Documents\\Test.SocialNetwork\\SocialNetworkMusician\\SocialNetworkMusician.Data\\SocialNetworkMusician.Data.csproj",
+        "projectPath": "C:\\Users\\User\\Documents\\2024-2025\\SocialNetworkForMusicians\\Social_network_for_musicians\\SocialNetworkMusician.Data\\SocialNetworkMusician.Data.csproj",
         "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\User\\Documents\\Test.SocialNetwork\\SocialNetworkMusician\\SocialNetworkMusician.Data\\obj\\",
+        "outputPath": "C:\\Users\\User\\Documents\\2024-2025\\SocialNetworkForMusicians\\Social_network_for_musicians\\SocialNetworkMusician.Data\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Nevron Software\\Nevron Open Vision 2022.3\\NugetPackage"
