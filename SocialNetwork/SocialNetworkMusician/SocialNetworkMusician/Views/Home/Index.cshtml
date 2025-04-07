@@ -1,8 +1,47 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@using Microsoft.AspNetCore.Identity
+@using SocialNetworkMusician.Data.Data
+@inject SignInManager<ApplicationUser> SignInManager
+
+@{
+    ViewData["Title"] = "Welcome to SoundSocial";
+    Layout = "_Layout";
+    var isLoggedIn = SignInManager.IsSignedIn(User);
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-center py-5">
+    <img src="https://cdn-icons-png.flaticon.com/512/727/727245.png" width="100" />
+    <h1 class="display-3 fw-bold text-warning mt-3">SoundSocial</h1>
+    <p class="lead text-light">Where musicians connect, share, and shine.</p>
+
+    @if (!isLoggedIn)
+    {
+        <div class="mt-4 d-flex justify-content-center gap-3">
+            <a class="btn btn-outline-light btn-lg custom-auth-btn" asp-area="Identity" asp-page="/Account/Login">🔐 Login</a>
+            <a class="btn btn-primary btn-lg custom-auth-btn" asp-area="Identity" asp-page="/Account/Register">🚀 Join Now</a>
+        </div>
+    }
+    else
+    {
+        <div class="mt-4">
+            <a class="btn btn-success btn-lg me-3" asp-controller="Tracks" asp-action="Index">🎵 Explore Tracks</a>
+            <a class="btn btn-outline-info btn-lg" asp-controller="Playlists" asp-action="Index">📁 Your Playlists</a>
+        </div>
+    }
+</div>
+
+<div class="container mt-5 text-center text-white">
+    <div class="row">
+        <div class="col-md-4">
+            <h3>🎤 Create</h3>
+            <p>Upload music, build your presence, and shine.</p>
+        </div>
+        <div class="col-md-4">
+            <h3>👥 Connect</h3>
+            <p>Follow artists, grow your network, get inspired.</p>
+        </div>
+        <div class="col-md-4">
+            <h3>📈 Grow</h3>
+            <p>Track stats, see your reach, and improve daily.</p>
+        </div>
+    </div>
 </div>

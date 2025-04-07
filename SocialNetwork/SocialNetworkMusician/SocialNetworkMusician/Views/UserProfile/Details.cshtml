@@ -1,0 +1,12 @@
+﻿@model SocialNetworkMusician.Models.UserProfileViewModel
+
+<h2 class="text-white">@Model.DisplayName's Profile</h2>
+<ul class="list-group mb-3">
+    <li class="list-group-item">Email: @Model.Email</li>
+    <li class="list-group-item">Tracks Uploaded: @Model.TrackCount</li>
+    <li class="list-group-item">
+        Joined:
+        @(Model.JoinedDate.HasValue ? Model.JoinedDate.Value.ToShortDateString() : "N/A")
+    </li>
+</ul>
+<a asp-action="Index" class="btn btn-secondary">Back to Users</a>

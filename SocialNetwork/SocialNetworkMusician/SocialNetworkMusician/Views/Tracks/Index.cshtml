@@ -1,31 +1,56 @@
 ﻿@model IEnumerable<TrackViewModel>
+@using Microsoft.AspNetCore.Identity
+@using SocialNetworkMusician.Data.Data
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 
-<h2>All Tracks</h2>
+@{
+    ViewData["Title"] = "Tracks";
+    var isAuthenticated = SignInManager.IsSignedIn(User);
+    var user = UserManager.GetUserAsync(User).Result;
+    var isAdmin = user != null && UserManager.IsInRoleAsync(user, "Admin").Result;
+}
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Title</th>
-            <th>Uploaded By</th>
-            <th>Category</th>
-            <th>Uploaded At</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var track in Model)
-        {
+<div class="text-white">
+    <h1 class="mb-4 text-center text-info">🎵 All Tracks</h1>
+
+    <div class="mb-4 text-center small">
+        <span>Debug Info:</span><br />
+        <span>• Is Authenticated: <strong>@isAuthenticated</strong></span><br />
+        <span>• Username: <strong>@user?.UserName</strong></span><br />
+        <span>• Is in Admin Role: <strong>@isAdmin</strong></span>
+    </div>
+
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <div class="text-center mb-4">
+            <a class="btn btn-success" asp-action="Create">Upload New Track</a>
+        </div>
+    }
+
+    <table class="table table-dark table-bordered table-hover text-center">
+        <thead class="table-light text-dark">
             <tr>
-                <td>@track.Title</td>
-                <td>@track.UserName</td>
-                <td>@track.CategoryName</td>
-                <td>@track.UploadedAt.ToShortDateString()</td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@track.Id">Details</a>
-                </td>
+                <th>Title</th>
+                <th>Uploaded By</th>
+                <th>Category</th>
+                <th>Uploaded At</th>
+                <th>Action</th>
             </tr>
-        }
-    </tbody>
-</table>
-
-<a class="btn btn-primary" asp-action="Create">Upload New Track</a>
+        </thead>
+        <tbody>
+            @foreach (var track in Model)
+            {
+                <tr>
+                    <td>@track.Title</td>
+                    <td>@track.UserName</td>
+                    <td>@track.CategoryName</td>
+                    <td>@track.UploadedAt.ToShortDateString()</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@track.Id" class="btn btn-sm btn-outline-info">Details</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -14,7 +14,7 @@ namespace SocialNetworkMusician.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
-
+       
         public TracksController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
@@ -66,12 +66,15 @@ namespace SocialNetworkMusician.Controllers
         }
 
         [Authorize]
+        [Authorize]
         public IActionResult Create()
         {
             ViewBag.Categories = new SelectList(_context.TrackCategories, "Id", "Name");
             return View();
         }
 
+        [HttpPost]
+        [Authorize]
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> Create(TrackViewModel model, IFormFile MusicFile)
@@ -83,9 +86,8 @@ namespace SocialNetworkMusician.Controllers
                 return View(model);
             }
 
-           
             var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
-            Directory.CreateDirectory(uploadsFolder); 
+            Directory.CreateDirectory(uploadsFolder);
 
             var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(MusicFile.FileName);
             var filePath = Path.Combine(uploadsFolder, uniqueFileName);
@@ -113,5 +115,6 @@ namespace SocialNetworkMusician.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
     }
 }

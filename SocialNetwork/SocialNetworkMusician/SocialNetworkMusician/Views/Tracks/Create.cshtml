@@ -1,37 +1,47 @@
 ﻿@model TrackViewModel
 
-<h2>Upload New Track</h2>
+<div class="container mt-5 mb-5 px-4" style="max-width: 800px;">
+    <h2 class="text-white mb-4 text-center">Upload New Track</h2>
 
-<form asp-action="Create" method="post" enctype="multipart/form-data">
-    <div class="form-group">
-        <label asp-for="Title"></label>
-        <input asp-for="Title" class="form-control" />
-        <span asp-validation-for="Title" class="text-danger"></span>
-    </div>
+    <form asp-action="Create" method="post" enctype="multipart/form-data">
+        <div class="form-group mb-3">
+            <label asp-for="Title"></label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
 
-    <div class="form-group">
-        <label asp-for="Description"></label>
-        <textarea asp-for="Description" class="form-control"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
+        <div class="form-group mb-3">
+            <label asp-for="Description"></label>
+            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
 
-    <div class="form-group">
-        <label asp-for="FileUrl"></label>
-        <input asp-for="FileUrl" class="form-control" />
-        <input type="file" name="MusicFile" class="form-control" accept=".mp3,.wav"/>
-    </div>
+        <div class="form-group mb-3">
+            <label asp-for="FileUrl"></label>
+            <input asp-for="FileUrl" class="form-control" />
+        </div>
 
-    <div class="form-group">
-        <label asp-for="CategoryId">Category</label>
-        <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.Categories">
-            <option value="">-- Select Category --</option>
-        </select>
-        <span asp-validation-for="CategoryId" class="text-danger"></span>
-    </div>
+        <div class="form-group mb-3">
+            <label class="custom-file-upload">
+                <input type="file" name="MusicFile" accept=".mp3,.wav" />
+                🎵 Upload Music File
+            </label>
+        </div>
 
-    <button type="submit" class="btn btn-success">Upload</button>
-    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-</form>
+        <div class="form-group mb-4">
+            <label asp-for="CategoryId">Category</label>
+            <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.Categories">
+                <option value="">-- Select Category --</option>
+            </select>
+            <span asp-validation-for="CategoryId" class="text-danger"></span>
+        </div>
+
+        <div class="d-flex justify-content-between gap-2">
+            <button type="submit" class="btn btn-success px-4">Upload</button>
+            <a asp-action="Index" class="btn btn-secondary px-4">Cancel</a>
+        </div>
+    </form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

@@ -4,9 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SocialNetworkMusician.Data.Data;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SocialNetworkMusician.Data.SeedData
@@ -14,49 +12,82 @@ namespace SocialNetworkMusician.Data.SeedData
     public static class SeedData
     {
         public static async Task InitializeAsync(IServiceProvider serviceProvider)
+        { }
+             private const string adminEmail = "admin@music.com";
+        private const string adminPassword = "Admin123!";
+        private const string demoEmail = "user@music.com";
+        private const string demoPassword = "User123!";
+        
+
+        public static async Task SeedAsync(this IApplicationBuilder app)
         {
-            using var scope = serviceProvider.CreateScope();
+            using var scope = app.ApplicationServices.CreateScope();
+
             var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+           
 
-            context.Database.Migrate();
+            if (context.Database.GetPendingMigrations().Any())
+            {
+                context.Database.Migrate();
+            }
 
-            // Seed Roles
+
             if (!await roleManager.RoleExistsAsync("Admin"))
                 await roleManager.CreateAsync(new IdentityRole("Admin"));
 
             if (!await roleManager.RoleExistsAsync("User"))
                 await roleManager.CreateAsync(new IdentityRole("User"));
 
-            // Seed Users
-            var adminUser = await userManager.FindByEmailAsync("admin@music.com");
+
+            var adminUsers = await userManager.Users
+                .Where(u => u.NormalizedEmail == adminEmail.ToUpper())
+                .ToListAsync();
+
+            if (adminUsers.Count > 1)
+            {
+                for (int i = 1; i < adminUsers.Count; i++)
+                    await userManager.DeleteAsync(adminUsers[i]);
+            }
+
+
+            var adminUser = await userManager.FindByEmailAsync(adminEmail);
             if (adminUser == null)
             {
                 adminUser = new ApplicationUser
                 {
                     UserName = "admin",
-                    Email = "admin@music.com",
+                    Email = adminEmail,
                     DisplayName = "Admin"
                 };
-                await userManager.CreateAsync(adminUser, "Admin123!");
+                await userManager.CreateAsync(adminUser, adminPassword);
+            }
+
+            if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
+            {
                 await userManager.AddToRoleAsync(adminUser, "Admin");
             }
 
-            var demoUser = await userManager.FindByEmailAsync("user@music.com");
+
+            var demoUser = await userManager.FindByEmailAsync(demoEmail);
             if (demoUser == null)
             {
                 demoUser = new ApplicationUser
                 {
                     UserName = "demoUser",
-                    Email = "user@music.com",
+                    Email = demoEmail,
                     DisplayName = "Demo User"
                 };
-                await userManager.CreateAsync(demoUser, "User123!");
+                await userManager.CreateAsync(demoUser, demoPassword);
+            }
+
+            if (!await userManager.IsInRoleAsync(demoUser, "User"))
+            {
                 await userManager.AddToRoleAsync(demoUser, "User");
             }
 
-            // Seed Genres
+
             if (!context.Genres.Any())
             {
                 context.Genres.AddRange(
@@ -67,7 +98,7 @@ namespace SocialNetworkMusician.Data.SeedData
                 );
             }
 
-            // Seed Categories
+
             if (!context.TrackCategories.Any())
             {
                 context.TrackCategories.AddRange(
@@ -77,7 +108,7 @@ namespace SocialNetworkMusician.Data.SeedData
                 );
             }
 
-            // Seed Music Tracks
+
             if (!context.MusicTracks.Any())
             {
                 context.MusicTracks.Add(new MusicTrack
@@ -85,11 +116,13 @@ namespace SocialNetworkMusician.Data.SeedData
                     Title = "First Track",
                     Description = "This is a demo track.",
                     FileUrl = "https://example.com/track.mp3",
-                    UserId = demoUser.Id
+                    UserId = adminUser.Id,
+                    UploadedAt = DateTime.UtcNow
                 });
             }
 
             await context.SaveChangesAsync();
+        
         }
     }
 }
