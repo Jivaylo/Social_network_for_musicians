@@ -16,7 +16,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SocialNetworkMusician")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+be1a0fb6e412cfed87ade436b0fee0de42dae98c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+405c155cec20fbac1cb1ae0af9f9b1da14da0d9f")]
 [assembly: System.Reflection.AssemblyProductAttribute("SocialNetworkMusician")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SocialNetworkMusician")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

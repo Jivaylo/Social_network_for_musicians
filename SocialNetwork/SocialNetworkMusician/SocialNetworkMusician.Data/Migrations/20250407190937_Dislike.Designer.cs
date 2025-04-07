@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SocialNetworkMusician.Data;
 
@@ -11,9 +12,10 @@ using SocialNetworkMusician.Data;
 namespace SocialNetworkMusician.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250407190937_Dislike")]
+    partial class Dislike
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -209,9 +211,6 @@ namespace SocialNetworkMusician.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("JoinedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("LastLogin")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("LockoutEnabled")

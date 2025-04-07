@@ -115,6 +115,14 @@ namespace SocialNetworkMusician.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
+                    var user = await _signInManager.UserManager.FindByEmailAsync(Input.Email);
+
+                    if (user != null)
+                    {
+                        user.LastLogin = DateTime.UtcNow;
+                        await _signInManager.UserManager.UpdateAsync(user);
+                    }
+
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
                 }

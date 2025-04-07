@@ -43,9 +43,15 @@ namespace SocialNetworkMusician.Controllers
 
         public async Task<IActionResult> Details(Guid id)
         {
+            var user = await _userManager.GetUserAsync(User);
+            var currentUserId = user?.Id;
+
             var track = await _context.MusicTracks
                 .Include(t => t.User)
                 .Include(t => t.Category)
+                .Include(t => t.Likes)
+                .Include(t => t.Comments)
+                .ThenInclude(c => c.User)
                 .FirstOrDefaultAsync(t => t.Id == id);
 
             if (track == null)
@@ -59,7 +65,15 @@ namespace SocialNetworkMusician.Controllers
                 FileUrl = track.FileUrl,
                 CategoryName = track.Category?.Name,
                 UploadedAt = track.UploadedAt,
-                UserName = track.User?.UserName
+                UserName = track.User?.UserName,
+                LikeCount = track.Likes.Count,
+                IsLikedByCurrentUser = currentUserId != null && track.Likes.Any(l => l.UserId == currentUserId),
+                Comments = track.Comments.Select(c => new CommentViewModel
+                {
+                    UserName = c.User.UserName,
+                    Content = c.Content,
+                    CreatedAt = c.CreatedAt
+                }).OrderByDescending(c => c.CreatedAt).ToList()
             };
 
             return View(vm);
@@ -114,6 +128,114 @@ namespace SocialNetworkMusician.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
+        }
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var track = await _context.MusicTracks.FindAsync(id);
+
+            if (track == null)
+                return NotFound();
+
+            var user = await _userManager.GetUserAsync(User);
+            if (track.UserId != user.Id && !User.IsInRole("Admin"))
+                return Forbid();
+
+            _context.MusicTracks.Remove(track);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Like(Guid id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var track = await _context.MusicTracks
+                .Include(t => t.Likes)
+                .Include(t => t.Dislikes)
+                .FirstOrDefaultAsync(t => t.Id == id);
+
+            if (track == null) return NotFound();
+
+            var like = track.Likes.FirstOrDefault(l => l.UserId == user.Id);
+            var dislike = track.Dislikes.FirstOrDefault(d => d.UserId == user.Id);
+
+            if (like != null)
+                _context.Likes.Remove(like);
+            else
+            {
+                if (dislike != null) _context.Dislikes.Remove(dislike);
+                _context.Likes.Add(new Like { Id = Guid.NewGuid(), UserId = user.Id, MusicTrackId = id });
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Dislike(Guid id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var track = await _context.MusicTracks
+                .Include(t => t.Dislikes)
+                .Include(t => t.Likes)
+                .FirstOrDefaultAsync(t => t.Id == id);
+
+            if (track == null)
+                return NotFound();
+
+            var dislike = track.Dislikes.FirstOrDefault(d => d.UserId == user.Id);
+            var like = track.Likes.FirstOrDefault(l => l.UserId == user.Id);
+
+            if (dislike != null)
+                _context.Dislikes.Remove(dislike);
+            else
+            {
+                if (like != null)
+                    _context.Likes.Remove(like);
+
+                _context.Dislikes.Add(new Dislike
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = user.Id,
+                    MusicTrackId = id
+                });
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> AddComment(Guid id, string newComment)
+        {
+            if (string.IsNullOrWhiteSpace(newComment))
+                return RedirectToAction(nameof(Details), new { id });
+
+            var user = await _userManager.GetUserAsync(User);
+            var track = await _context.MusicTracks.FindAsync(id);
+
+            if (track == null)
+                return NotFound();
+
+            var comment = new Comment
+            {
+                Id = Guid.NewGuid(),
+                Content = newComment,
+                CreatedAt = DateTime.UtcNow,
+                UserId = user.Id,
+                MusicTrackId = id
+            };
+
+            _context.Comments.Add(comment);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Details), new { id });
         }
 
     }

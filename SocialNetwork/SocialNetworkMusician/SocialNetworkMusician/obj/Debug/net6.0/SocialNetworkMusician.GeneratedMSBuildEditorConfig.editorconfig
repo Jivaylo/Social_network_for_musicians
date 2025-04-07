@@ -206,12 +206,12 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVHJhY2tzXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/User/Documents/SocialNetwork/Social_network_for_musicians/SocialNetwork/SocialNetworkMusician/SocialNetworkMusician/Views/UserProfile/Details.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclByb2ZpbGVcRGV0YWlscy5jc2h0bWw=
+[C:/Users/User/Documents/SocialNetwork/Social_network_for_musicians/SocialNetwork/SocialNetworkMusician/SocialNetworkMusician/Views/Users/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlcnNcRGV0YWlscy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/User/Documents/SocialNetwork/Social_network_for_musicians/SocialNetwork/SocialNetworkMusician/SocialNetworkMusician/Views/UserProfile/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclByb2ZpbGVcSW5kZXguY3NodG1s
+[C:/Users/User/Documents/SocialNetwork/Social_network_for_musicians/SocialNetwork/SocialNetworkMusician/SocialNetworkMusician/Views/Users/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlcnNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/User/Documents/SocialNetwork/Social_network_for_musicians/SocialNetwork/SocialNetworkMusician/SocialNetworkMusician/Views/_ViewImports.cshtml]

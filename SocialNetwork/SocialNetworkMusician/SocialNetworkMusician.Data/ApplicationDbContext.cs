@@ -18,6 +18,7 @@ namespace SocialNetworkMusician.Data
         public DbSet<Genre> Genres { get; set; }
         public DbSet<TrackCategory> TrackCategories { get; set; }
         public DbSet<Notification> Notifications { get; set; }
+        public DbSet<Dislike> Dislikes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -104,6 +105,18 @@ namespace SocialNetworkMusician.Data
                 .HasOne(n => n.User)
                 .WithMany()
                 .HasForeignKey(n => n.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Dislike>()
+                .HasOne(d => d.User)
+                .WithMany()
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Dislike>()
+                .HasOne(d => d.MusicTrack)
+                .WithMany(t => t.Dislikes)
+                .HasForeignKey(d => d.MusicTrackId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }
