@@ -3987,6 +3987,7 @@
         "dependencies": {
           "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": "6.0.35",
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "6.0.35",
+          "Microsoft.AspNetCore.Identity.UI": "6.0.35",
           "Microsoft.EntityFrameworkCore.SqlServer": "6.0.35",
           "Microsoft.EntityFrameworkCore.Sqlite": "6.0.35"
         },
