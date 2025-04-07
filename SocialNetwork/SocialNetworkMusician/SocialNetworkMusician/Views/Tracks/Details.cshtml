@@ -1,0 +1,17 @@
+﻿@model TrackViewModel
+
+<h2>Track Details</h2>
+
+<div>
+    <h3>@Model.Title</h3>
+    <p><strong>Uploaded By:</strong> @Model.UserName</p>
+    <p><strong>Description:</strong> @Model.Description</p>
+    <p><strong>Category:</strong> @Model.CategoryName</p>
+    <p><strong>Uploaded At:</strong> @Model.UploadedAt</p>
+    <audio controls>
+        <source src="@Model.FileUrl" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+</div>
+
+<a asp-action="Index">Back to List</a>

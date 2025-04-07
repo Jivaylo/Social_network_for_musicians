@@ -1,0 +1,31 @@
+﻿@model IEnumerable<TrackViewModel>
+
+<h2>All Tracks</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Uploaded By</th>
+            <th>Category</th>
+            <th>Uploaded At</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var track in Model)
+        {
+            <tr>
+                <td>@track.Title</td>
+                <td>@track.UserName</td>
+                <td>@track.CategoryName</td>
+                <td>@track.UploadedAt.ToShortDateString()</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@track.Id">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a class="btn btn-primary" asp-action="Create">Upload New Track</a>
