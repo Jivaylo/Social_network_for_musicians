@@ -1,0 +1,76 @@
+﻿@model List<AdminUserViewModel>
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<h2 class="text-white">👑 Admin Dashboard</h2>
+
+<div class="text-light mb-4">
+    <p><strong>Total Users:</strong> @ViewBag.UserCount</p>
+    <p><strong>Total Tracks:</strong> @ViewBag.TrackCount</p>
+    <p><strong>Total Plays:</strong> @ViewBag.TotalPlays</p>
+</div>
+
+<table class="table table-dark table-striped">
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Email</th>
+            <th>Roles</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.DisplayName</td>
+                <td>@user.Email</td>
+                <td>
+                    @if (user.IsAdmin)
+                    {
+                        <span class="badge bg-warning text-dark">Admin</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">User</span>
+                    }
+
+                    @if (user.IsBanned)
+                    {
+                        <span class="badge bg-danger ms-2">Banned</span>
+                    }
+                </td>
+                <td>
+                    <div class="d-flex flex-wrap gap-2">
+
+                        @if (!user.IsAdmin)
+                        {
+                            <form asp-action="PromoteToAdmin" method="post">
+                                <input type="hidden" name="userId" value="@user.Id" />
+                                <button class="btn btn-sm btn-outline-success px-3">👑 Promote</button>
+                            </form>
+                        }
+
+                        @if (!user.IsBanned)
+                        {
+                            <form asp-action="BanUser" method="post">
+                                <input type="hidden" name="userId" value="@user.Id" />
+                                <button class="btn btn-sm btn-outline-danger px-3">🚫 Ban</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form asp-action="UnbanUser" method="post">
+                                <input type="hidden" name="userId" value="@user.Id" />
+                                <button class="btn btn-sm btn-outline-warning px-3 text-dark">🔓 Unban</button>
+                            </form>
+                        }
+
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
