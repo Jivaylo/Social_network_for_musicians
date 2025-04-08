@@ -76,6 +76,16 @@ namespace SocialNetworkMusician.Controllers
                     CreatedAt = c.CreatedAt
                 }).OrderByDescending(c => c.CreatedAt).ToList()
             };
+            if (user != null)
+            {
+                ViewBag.UserPlaylists = await _context.Playlists
+                    .Where(p => p.UserId == user.Id)
+                    .ToListAsync();
+            }
+            else
+            {
+                ViewBag.UserPlaylists = new List<Playlist>();
+            }
 
             return View(vm);
         }

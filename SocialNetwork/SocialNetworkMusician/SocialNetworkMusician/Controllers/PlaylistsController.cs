@@ -48,7 +48,7 @@ namespace SocialNetworkMusician.Controllers
 
             return View(viewModel);
         }
-
+        
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -85,33 +85,50 @@ namespace SocialNetworkMusician.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize]
+        [HttpPost]
         public async Task<IActionResult> AddTrack(Guid playlistId, Guid trackId)
         {
-            var exists = await _context.PlaylistTracks
-                .AnyAsync(pt => pt.PlaylistId == playlistId && pt.MusicTrackId == trackId);
-            if (!exists)
+            var user = await _userManager.GetUserAsync(User);
+            var playlist = await _context.Playlists
+                .Include(p => p.PlaylistTracks)
+                .FirstOrDefaultAsync(p => p.Id == playlistId && p.UserId == user.Id);
+
+            if (playlist == null) return Forbid();
+
+            bool alreadyIn = playlist.PlaylistTracks.Any(pt => pt.MusicTrackId == trackId);
+            if (!alreadyIn)
             {
                 _context.PlaylistTracks.Add(new PlaylistTrack
                 {
-                    Id = Guid.NewGuid(),
                     PlaylistId = playlistId,
                     MusicTrackId = trackId
                 });
+
                 await _context.SaveChangesAsync();
             }
-            return RedirectToAction("Index");
+
+            return RedirectToAction("Details", "Tracks", new { id = trackId });
         }
 
+
+        [Authorize]
+        [HttpPost]
         public async Task<IActionResult> RemoveTrack(Guid playlistId, Guid trackId)
         {
-            var item = await _context.PlaylistTracks
-                .FirstOrDefaultAsync(pt => pt.PlaylistId == playlistId && pt.MusicTrackId == trackId);
-            if (item != null)
+            var user = await _userManager.GetUserAsync(User);
+            var playlistTrack = await _context.PlaylistTracks
+                .Include(pt => pt.Playlist)
+                .FirstOrDefaultAsync(pt => pt.PlaylistId == playlistId && pt.MusicTrackId == trackId && pt.Playlist.UserId == user.Id);
+
+            if (playlistTrack != null)
             {
-                _context.PlaylistTracks.Remove(item);
+                _context.PlaylistTracks.Remove(playlistTrack);
                 await _context.SaveChangesAsync();
             }
-            return RedirectToAction("Index");
+
+            return RedirectToAction("Details", "Tracks", new { id = trackId });
         }
+
     }
 }
