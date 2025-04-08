@@ -11,6 +11,12 @@
     <p><strong>Total Tracks:</strong> @ViewBag.TrackCount</p>
     <p><strong>Total Plays:</strong> @ViewBag.TotalPlays</p>
 </div>
+<div class="text-end mb-2">
+    <span class="text-light">Sort by:</span>
+    <a asp-action="Index" asp-route-sortBy="email" class="btn btn-sm btn-outline-light mx-1">📧 Email</a>
+    <a asp-action="Index" asp-route-sortBy="role" class="btn btn-sm btn-outline-light mx-1">🛡️ Role</a>
+    <a asp-action="Index" asp-route-sortBy="joined" class="btn btn-sm btn-outline-light mx-1">📅 Joined Date</a>
+</div>
 
 <table class="table table-dark table-striped">
     <thead>

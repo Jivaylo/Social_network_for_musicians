@@ -52,5 +52,19 @@ namespace SocialNetworkMusician
 
             app.Run();
         }
+        public class FakeEmailSender : IEmailSender
+        {
+            public Task SendEmailAsync(string email, string subject, string htmlMessage)
+            {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("=========================================");
+                Console.WriteLine($"?? EMAIL SENT TO: {email}");
+                Console.WriteLine($"Subject: {subject}");
+                Console.WriteLine($"Body: {htmlMessage}");
+                Console.WriteLine("=========================================");
+                Console.ResetColor();
+                return Task.CompletedTask;
+            }
+        }
     }
 }
