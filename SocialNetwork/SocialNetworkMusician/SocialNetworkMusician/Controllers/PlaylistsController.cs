@@ -24,37 +24,48 @@ namespace SocialNetworkMusician.Controllers
             var playlist = await _context.Playlists
                 .Include(p => p.PlaylistTracks)
                     .ThenInclude(pt => pt.MusicTrack)
-                .ThenInclude(t => t.Category)
+                .ThenInclude(mt => mt.Category)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (playlist == null)
                 return NotFound();
 
-            var playlistTrackIds = playlist.PlaylistTracks.Select(pt => pt.MusicTrackId).ToList();
+            var allTrackIdsInPlaylist = playlist.PlaylistTracks.Select(pt => pt.MusicTrackId).ToList();
 
-            var availableTracks = await _context.MusicTracks
-                .Where(t => !playlistTrackIds.Contains(t.Id) &&
-                            (string.IsNullOrEmpty(search) || t.Title.Contains(search)))
-                .ToListAsync();
+            // Search logic
+            var query = _context.MusicTracks
+                .Include(t => t.Category)
+                .Where(t => !allTrackIdsInPlaylist.Contains(t.Id));
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                string loweredSearch = search.ToLower();
+                query = query.Where(t => t.Title.ToLower().Contains(loweredSearch));
+            }
+
+            var availableTracks = await query.ToListAsync();
 
             var model = new PlaylistViewModel
             {
                 Id = playlist.Id,
                 Name = playlist.Name,
-                Tracks = playlist.PlaylistTracks.Select(pt => new TrackViewModel
-                {
-                    Id = pt.MusicTrack.Id,
-                    Title = pt.MusicTrack.Title,
-                    Description = pt.MusicTrack.Description,
-                    CategoryName = pt.MusicTrack.Category?.Name
-                }).ToList()
+                Tracks = playlist.PlaylistTracks
+                    .Select(pt => new TrackViewModel
+                    {
+                        Id = pt.MusicTrack.Id,
+                        Title = pt.MusicTrack.Title,
+                        Description = pt.MusicTrack.Description,
+                        CategoryName = pt.MusicTrack.Category?.Name,
+                        FileUrl = pt.MusicTrack.FileUrl
+                    }).ToList()
             };
 
-            ViewBag.Search = search;
             ViewBag.AvailableTracks = availableTracks;
+            ViewBag.Search = search;
 
             return View(model);
         }
+
 
 
         public async Task<IActionResult> Index()
@@ -120,22 +131,25 @@ namespace SocialNetworkMusician.Controllers
         }
 
 
-        [Authorize]
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> RemoveTrack(Guid playlistId, Guid trackId)
         {
-            var user = await _userManager.GetUserAsync(User);
-            var playlistTrack = await _context.PlaylistTracks
-                .Include(pt => pt.Playlist)
-                .FirstOrDefaultAsync(pt => pt.PlaylistId == playlistId && pt.MusicTrackId == trackId && pt.Playlist.UserId == user.Id);
+            var playlist = await _context.Playlists
+                .Include(p => p.PlaylistTracks)
+                .FirstOrDefaultAsync(p => p.Id == playlistId);
 
+            if (playlist == null)
+                return NotFound();
+
+            var playlistTrack = playlist.PlaylistTracks.FirstOrDefault(pt => pt.MusicTrackId == trackId);
             if (playlistTrack != null)
             {
-                _context.PlaylistTracks.Remove(playlistTrack);
+                _context.Remove(playlistTrack);
                 await _context.SaveChangesAsync();
             }
 
-            return RedirectToAction("Details", "Tracks", new { id = trackId });
+            return RedirectToAction("Details", new { id = playlistId });
         }
 
     }

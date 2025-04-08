@@ -54,9 +54,16 @@ else
                 <div>
                     🎵 <strong>@track.Title</strong> - @track.CategoryName
                 </div>
-                <audio controls style="height: 30px; max-width: 200px;">
-                    <source src="@track.FileUrl" type="audio/mpeg" />
-                </audio>
+                <div class="d-flex gap-2 align-items-center">
+                    <audio controls style="height: 30px; max-width: 200px;">
+                        <source src="@track.FileUrl" type="audio/mpeg" />
+                    </audio>
+                    <form asp-action="RemoveTrack" method="post" class="d-inline m-0">
+                        <input type="hidden" name="trackId" value="@track.Id" />
+                        <input type="hidden" name="playlistId" value="@Model.Id" />
+                        <button type="submit" class="btn btn-sm btn-outline-danger">🗑 Remove</button>
+                    </form>
+                </div>
             </li>
         }
     </ul>
