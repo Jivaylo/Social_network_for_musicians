@@ -15,6 +15,8 @@ namespace SocialNetworkMusician.Data.Data
         [StringLength(100)]
         public string? DisplayName { get; set; }
         public DateTime JoinedDate { get; set; } = DateTime.UtcNow;
+        public string? Bio { get; set; }
+        public string? ProfileImageUrl { get; set; }
         public DateTime? LastLogin { get; set; }
         public ICollection<MusicTrack> MusicTracks { get; set; } = new List<MusicTrack>();
 

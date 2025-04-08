@@ -72,19 +72,18 @@ namespace SocialNetworkMusician.Controllers
             return View("Profile", vm);
         }
 
-        
-        [Authorize]
+
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Follow(string userId)
         {
             var currentUser = await _userManager.GetUserAsync(User);
-            if (currentUser == null || currentUser.Id == userId)
-                return BadRequest();
+            if (userId == currentUser.Id) return BadRequest();
 
-            var alreadyFollowing = await _context.Follows
-                .AnyAsync(f => f.FollowerId == currentUser.Id && f.FollowedId == userId);
+            var exists = await _context.Follows.AnyAsync(f =>
+                f.FollowerId == currentUser.Id && f.FollowedId == userId);
 
-            if (!alreadyFollowing)
+            if (!exists)
             {
                 _context.Follows.Add(new Follow
                 {
@@ -92,22 +91,21 @@ namespace SocialNetworkMusician.Controllers
                     FollowedId = userId,
                     FollowedAt = DateTime.UtcNow
                 });
+
                 await _context.SaveChangesAsync();
             }
 
-            return RedirectToAction("Profile", new { id = userId });
+            return RedirectToAction("Index");
         }
 
-   
-        [Authorize]
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Unfollow(string userId)
         {
             var currentUser = await _userManager.GetUserAsync(User);
-            if (currentUser == null) return BadRequest();
 
-            var follow = await _context.Follows
-                .FirstOrDefaultAsync(f => f.FollowerId == currentUser.Id && f.FollowedId == userId);
+            var follow = await _context.Follows.FirstOrDefaultAsync(f =>
+                f.FollowerId == currentUser.Id && f.FollowedId == userId);
 
             if (follow != null)
             {
@@ -115,29 +113,90 @@ namespace SocialNetworkMusician.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            return RedirectToAction("Profile", new { id = userId });
+            return RedirectToAction("Index");
         }
-        [AllowAnonymous]
-        public async Task<IActionResult> Index()
+        [Authorize]
+        public async Task<IActionResult> Index(string search)
         {
-            var users = await _userManager.Users.ToListAsync();
+            var currentUser = await _userManager.GetUserAsync(User);
+            var usersQuery = _userManager.Users.AsQueryable();
 
-            var userList = users.Select(u => new UserProfileViewModel
+            if (!string.IsNullOrEmpty(search))
             {
-                Id = u.Id,
-                DisplayName = u.DisplayName,
-                Email = u.Email,
-                JoinedDate = u.JoinedDate,
-                Tracks = _context.MusicTracks
-                    .Where(t => t.UserId == u.Id)
-                    .Select(t => new TrackViewModel
-                    {
-                        Id = t.Id,
-                        Title = t.Title
-                    }).ToList()
-            }).ToList();
+                usersQuery = usersQuery.Where(u => u.Email.Contains(search));
+            }
 
-            return View(userList);
+            var users = await usersQuery.ToListAsync();
+
+            var model = new List<UserProfileViewModel>();
+
+            foreach (var user in users)
+            {
+                if (user.Id == currentUser.Id) continue;
+
+                var isFollowing = await _context.Follows.AnyAsync(f =>
+                    f.FollowerId == currentUser.Id && f.FollowedId == user.Id);
+
+                model.Add(new UserProfileViewModel
+                {
+                    Id = user.Id,
+                    DisplayName = user.DisplayName,
+                    Email = user.Email,
+                    JoinedDate = user.JoinedDate,
+                    IsFollowing = isFollowing
+                });
+            }
+
+            ViewBag.Search = search;
+            return View(model);
+        }
+        [Authorize]
+        public async Task<IActionResult> EditProfile()
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            var model = new EditProfileViewModel
+            {
+                DisplayName = user.DisplayName,
+                Bio = user.Bio,
+                ExistingImageUrl = user.ProfileImageUrl
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> EditProfile(EditProfileViewModel model)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (ModelState.IsValid)
+            {
+                user.DisplayName = model.DisplayName;
+                user.Bio = model.Bio;
+
+                if (model.ProfileImage != null)
+                {
+                    var uploads = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/profile");
+                    Directory.CreateDirectory(uploads);
+
+                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(model.ProfileImage.FileName);
+                    var filePath = Path.Combine(uploads, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await model.ProfileImage.CopyToAsync(stream);
+                    }
+
+                    user.ProfileImageUrl = "/uploads/profile/" + fileName;
+                }
+
+                await _userManager.UpdateAsync(user);
+                return RedirectToAction("Profile", new { id = user.Id });
+            }
+
+            return View(model);
         }
     }
 }

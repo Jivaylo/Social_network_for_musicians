@@ -1,6 +1,12 @@
 ﻿@model UserProfileViewModel
 
 <h2 class="text-white">@Model.DisplayName's Profile</h2>
+@if (User.Identity?.IsAuthenticated == true && User.Identity.Name == Model.Email)
+{
+    <a asp-action="EditProfile" asp-controller="Users" class="btn btn-sm btn-outline-warning float-end">
+        ✏️ Edit Profile
+    </a>
+}
 
 <div class="row mb-4">
     <div class="col-md-6">
