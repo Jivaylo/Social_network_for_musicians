@@ -20,6 +20,7 @@ namespace SocialNetworkMusician.Data.Data
         [StringLength(500)]
         public string? Description { get; set; }
 
+
         [Required, Url]
         public string FileUrl { get; set; } = null!;
 

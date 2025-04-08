@@ -104,21 +104,20 @@ namespace SocialNetworkMusician.Controllers
             return RedirectToAction("Index");
         }
 
-        [Authorize]
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> AddTrack(Guid playlistId, Guid trackId)
         {
-            var user = await _userManager.GetUserAsync(User);
             var playlist = await _context.Playlists
                 .Include(p => p.PlaylistTracks)
-                .FirstOrDefaultAsync(p => p.Id == playlistId && p.UserId == user.Id);
+                .FirstOrDefaultAsync(p => p.Id == playlistId);
 
-            if (playlist == null) return Forbid();
+            if (playlist == null) return NotFound();
 
-            bool alreadyIn = playlist.PlaylistTracks.Any(pt => pt.MusicTrackId == trackId);
-            if (!alreadyIn)
+            
+            if (!playlist.PlaylistTracks.Any(pt => pt.MusicTrackId == trackId))
             {
-                _context.PlaylistTracks.Add(new PlaylistTrack
+                playlist.PlaylistTracks.Add(new PlaylistTrack
                 {
                     PlaylistId = playlistId,
                     MusicTrackId = trackId
@@ -127,7 +126,7 @@ namespace SocialNetworkMusician.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            return RedirectToAction("Details", "Tracks", new { id = trackId });
+            return RedirectToAction("Details", new { id = playlistId });
         }
 
 
