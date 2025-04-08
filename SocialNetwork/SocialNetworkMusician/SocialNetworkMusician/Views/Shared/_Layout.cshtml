@@ -42,6 +42,12 @@
                         <li class="nav-item">
                             <a class="nav-link text-light" asp-controller="Users" asp-action="Index">Users</a>
                         </li>
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-controller="Users" asp-action="EditProfile">👤 My Profile</a>
+                            </li>
+                        }
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>

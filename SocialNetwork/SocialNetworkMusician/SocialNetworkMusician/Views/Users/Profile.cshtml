@@ -3,7 +3,7 @@
 <h2 class="text-white">@Model.DisplayName's Profile</h2>
 @if (User.Identity?.IsAuthenticated == true && User.Identity.Name == Model.Email)
 {
-    <a asp-action="EditProfile" asp-controller="Users" class="btn btn-sm btn-outline-warning float-end">
+    <a asp-action="EditProfile" asp-controller="Users" class="btn btn-outline-warning float-end mb-3">
         ✏️ Edit Profile
     </a>
 }

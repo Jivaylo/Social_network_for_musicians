@@ -198,5 +198,11 @@ namespace SocialNetworkMusician.Controllers
 
             return View(model);
         }
+        [Authorize]
+        public async Task<IActionResult> MyProfile()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            return RedirectToAction("Profile", new { id = user.Id });
+        }
     }
 }
