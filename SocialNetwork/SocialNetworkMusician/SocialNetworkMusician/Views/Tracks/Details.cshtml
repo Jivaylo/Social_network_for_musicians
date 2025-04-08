@@ -6,7 +6,7 @@
 
         <h2 class="text-center mb-4">🎵 @Model.Title</h2>
 
-        <audio controls class="w-100 mb-4" style="border-radius: 10px;">
+        <audio controls class="w-100 mb-4" style="border-radius: 10px;" onplay="trackPlayed('@Model.Id')">
             <source src="@Model.FileUrl" type="audio/mpeg" />
             Your browser does not support the audio element.
         </audio>
@@ -15,10 +15,10 @@
         <p><strong>Category:</strong> @Model.CategoryName</p>
         <p><strong>Uploaded by:</strong> @Model.UserName</p>
         <p><strong>Uploaded at:</strong> @Model.UploadedAt.ToShortDateString()</p>
+        <p><strong>Play Count:</strong> 🔁 @Model.PlayCount</p>
 
-    
+  
         <div class="d-flex align-items-center gap-3 mt-3">
-
             <form method="post" asp-action="Like" asp-route-id="@Model.Id">
                 <button type="submit" class="btn btn-outline-success btn-sm">
                     👍 Like (@Model.LikeCount)
@@ -40,7 +40,7 @@
             }
         </div>
 
-        
+   
         @if (User.Identity.IsAuthenticated)
         {
             <form asp-controller="Playlists" asp-action="AddTrack" method="post" class="mt-4">
@@ -60,9 +60,8 @@
 
         <hr class="bg-light mt-5 mb-4" />
 
-     
+  
         <h4 class="mt-4">💬 Comments (@Model.Comments.Count)</h4>
-
         @if (Model.Comments.Any())
         {
             @foreach (var comment in Model.Comments)
@@ -79,7 +78,6 @@
             <p class="text-muted">No comments yet. Be the first one to say something 🎤</p>
         }
 
-    
         @if (User.Identity?.IsAuthenticated == true)
         {
             <form asp-action="AddComment" asp-route-id="@Model.Id" method="post" class="mt-4">
@@ -94,9 +92,18 @@
             <p class="text-muted mt-3">You must be logged in to comment.</p>
         }
 
-        
         <div class="text-end mt-5">
             <a asp-action="Index" class="btn btn-outline-light">⬅ Back to Tracks</a>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        function trackPlayed(trackId) {
+            fetch('/Tracks/IncrementPlayCount/' + trackId, {
+                method: 'POST'
+            });
+        }
+    </script>
+}

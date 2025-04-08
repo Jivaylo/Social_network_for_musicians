@@ -19,7 +19,7 @@ namespace SocialNetworkMusician.Data.Data
 
         [StringLength(500)]
         public string? Description { get; set; }
-
+        public int PlayCount { get; set; } = 0;
 
         [Required, Url]
         public string FileUrl { get; set; } = null!;

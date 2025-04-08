@@ -21,6 +21,7 @@ namespace SocialNetworkMusician.Models
         public Guid? CategoryId { get; set; }
 
         public string? CategoryName { get; set; }
+        public int PlayCount { get; set; }
 
         public DateTime UploadedAt { get; set; }
 

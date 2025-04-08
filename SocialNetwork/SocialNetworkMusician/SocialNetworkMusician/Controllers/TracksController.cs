@@ -68,6 +68,7 @@ namespace SocialNetworkMusician.Controllers
                 UploadedAt = track.UploadedAt,
                 UserName = track.User?.UserName,
                 LikeCount = track.Likes.Count,
+                PlayCount = track.PlayCount,
                 IsLikedByCurrentUser = currentUserId != null && track.Likes.Any(l => l.UserId == currentUserId),
                 Comments = track.Comments.Select(c => new CommentViewModel
                 {
@@ -247,6 +248,17 @@ namespace SocialNetworkMusician.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Details), new { id });
+        }
+        [HttpPost]
+        public async Task<IActionResult> IncrementPlayCount(Guid id)
+        {
+            var track = await _context.MusicTracks.FindAsync(id);
+            if (track == null) return NotFound();
+
+            track.PlayCount++;
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
 
     }
