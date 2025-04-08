@@ -32,13 +32,13 @@ namespace SocialNetworkMusician.Controllers
                     Title = t.Title,
                     Description = t.Description,
                     FileUrl = t.FileUrl,
-                    CategoryName = t.Category != null ? t.Category.Name : null,
                     UploadedAt = t.UploadedAt,
-                    UserName = t.User.UserName
+                    UserName = t.User.UserName,
+                    CategoryName = t.Category.Name
                 })
                 .ToListAsync();
 
-            return View(tracks);
+            return View(tracks); 
         }
 
         [Authorize]

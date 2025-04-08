@@ -1,0 +1,81 @@
+﻿@model UserProfileViewModel
+
+<h2 class="text-white">@Model.DisplayName's Profile</h2>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <ul class="list-group">
+            <li class="list-group-item">
+                <strong>Email:</strong> @Model.Email
+            </li>
+            <li class="list-group-item">
+                <strong>Joined:</strong>
+                @(Model.JoinedDate?.ToShortDateString() ?? "N/A")
+            </li>
+            <li class="list-group-item">
+                <strong>Tracks Uploaded:</strong> @Model.TrackCount
+            </li>
+            <li class="list-group-item">
+                <strong>Followers:</strong> @Model.FollowersCount
+                <br />
+                <strong>Following:</strong> @Model.FollowingCount
+            </li>
+        </ul>
+    </div>
+
+    <div class="col-md-6 text-end">
+        @if (User.Identity?.IsAuthenticated == true && User.Identity.Name != Model.Email)
+        {
+            <form asp-action="@(Model.IsFollowing ? "Unfollow" : "Follow")" asp-controller="Users" method="post">
+                <input type="hidden" name="userId" value="@Model.Id" />
+                <button class="btn btn-@(Model.IsFollowing ? "danger" : "primary") mt-2">
+                    @(Model.IsFollowing ? "Unfollow" : "Follow")
+                </button>
+            </form>
+        }
+    </div>
+</div>
+
+
+<h4 class="text-white mt-5">🎵 Tracks</h4>
+@if (Model.Tracks.Any())
+{
+    <ul class="list-group mb-4">
+        @foreach (var track in Model.Tracks)
+        {
+            <li class="list-group-item bg-dark text-light">
+                <strong>@track.Title</strong> - @track.CategoryName
+                <br />
+                <audio controls class="w-100 mt-2">
+                    <source src="@track.FileUrl" type="audio/mpeg" />
+                </audio>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p class="text-muted">No tracks uploaded yet.</p>
+}
+
+<h4 class="text-white">📁 Playlists</h4>
+@if (Model.Playlists.Any())
+{
+    <ul class="list-group">
+        @foreach (var playlist in Model.Playlists)
+        {
+            <li class="list-group-item bg-dark text-light">
+                <a asp-controller="Playlists" asp-action="Details" asp-route-id="@playlist.Id" class="text-warning">
+                    @playlist.Name
+                </a>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p class="text-muted">No playlists created yet.</p>
+}
+
+<a asp-action="Index" class="btn btn-outline-light mt-4">⬅ Back to Users</a>
+
