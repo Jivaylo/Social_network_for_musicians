@@ -19,18 +19,25 @@ namespace SocialNetworkMusician.Controllers
             _context = context;
             _userManager = userManager;
         }
-        public async Task<IActionResult> Details(Guid id)
+        public async Task<IActionResult> Details(Guid id, string? search)
         {
             var playlist = await _context.Playlists
                 .Include(p => p.PlaylistTracks)
-                .ThenInclude(pt => pt.MusicTrack)
+                    .ThenInclude(pt => pt.MusicTrack)
                 .ThenInclude(t => t.Category)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (playlist == null)
                 return NotFound();
 
-            var viewModel = new PlaylistViewModel
+            var playlistTrackIds = playlist.PlaylistTracks.Select(pt => pt.MusicTrackId).ToList();
+
+            var availableTracks = await _context.MusicTracks
+                .Where(t => !playlistTrackIds.Contains(t.Id) &&
+                            (string.IsNullOrEmpty(search) || t.Title.Contains(search)))
+                .ToListAsync();
+
+            var model = new PlaylistViewModel
             {
                 Id = playlist.Id,
                 Name = playlist.Name,
@@ -39,16 +46,17 @@ namespace SocialNetworkMusician.Controllers
                     Id = pt.MusicTrack.Id,
                     Title = pt.MusicTrack.Title,
                     Description = pt.MusicTrack.Description,
-                    CategoryName = pt.MusicTrack.Category?.Name,
-                    UploadedAt = pt.MusicTrack.UploadedAt,
-                    FileUrl = pt.MusicTrack.FileUrl,
-                    UserName = pt.MusicTrack.User?.UserName
+                    CategoryName = pt.MusicTrack.Category?.Name
                 }).ToList()
             };
 
-            return View(viewModel);
+            ViewBag.Search = search;
+            ViewBag.AvailableTracks = availableTracks;
+
+            return View(model);
         }
-        
+
+
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
