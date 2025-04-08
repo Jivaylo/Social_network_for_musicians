@@ -19,6 +19,35 @@ namespace SocialNetworkMusician.Controllers
             _context = context;
             _userManager = userManager;
         }
+        public async Task<IActionResult> Details(Guid id)
+        {
+            var playlist = await _context.Playlists
+                .Include(p => p.PlaylistTracks)
+                .ThenInclude(pt => pt.MusicTrack)
+                .ThenInclude(t => t.Category)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (playlist == null)
+                return NotFound();
+
+            var viewModel = new PlaylistViewModel
+            {
+                Id = playlist.Id,
+                Name = playlist.Name,
+                Tracks = playlist.PlaylistTracks.Select(pt => new TrackViewModel
+                {
+                    Id = pt.MusicTrack.Id,
+                    Title = pt.MusicTrack.Title,
+                    Description = pt.MusicTrack.Description,
+                    CategoryName = pt.MusicTrack.Category?.Name,
+                    UploadedAt = pt.MusicTrack.UploadedAt,
+                    FileUrl = pt.MusicTrack.FileUrl,
+                    UserName = pt.MusicTrack.User?.UserName
+                }).ToList()
+            };
+
+            return View(viewModel);
+        }
 
         public async Task<IActionResult> Index()
         {

@@ -50,5 +50,6 @@ namespace SocialNetworkMusician.Data.Data
 
         [JsonIgnore]
         public ICollection<Playlist> Playlists { get; set; } = new List<Playlist>();
+        public ICollection<PlaylistTrack> PlaylistTracks { get; set; } = new List<PlaylistTrack>();
     }
 }
