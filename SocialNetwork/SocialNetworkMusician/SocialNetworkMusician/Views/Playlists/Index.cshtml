@@ -1,0 +1,26 @@
+﻿@model IEnumerable<PlaylistViewModel>
+
+@{
+    ViewData["Title"] = "Your Playlists";
+}
+
+<h2 class="text-white mb-4">🎵 Your Playlists</h2>
+
+<a asp-action="Create" class="btn btn-success mb-3">➕ Create New Playlist</a>
+
+@if (!Model.Any())
+{
+    <p>No playlists yet. Go create your first one!</p>
+}
+else
+{
+    <ul class="list-group">
+        @foreach (var playlist in Model)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center bg-dark text-white">
+                <span>@playlist.Name</span>
+                <a asp-action="Details" asp-route-id="@playlist.Id" class="btn btn-outline-info btn-sm">View</a>
+            </li>
+        }
+    </ul>
+}

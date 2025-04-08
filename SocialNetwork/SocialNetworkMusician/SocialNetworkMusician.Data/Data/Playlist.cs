@@ -25,6 +25,6 @@ namespace SocialNetworkMusician.Data.Data
         public ApplicationUser User { get; set; } = null!;
 
         [JsonIgnore]
-        public ICollection<MusicTrack> Tracks { get; set; } = new List<MusicTrack>();
+        public ICollection<PlaylistTrack> PlaylistTracks { get; set; } = new List<PlaylistTrack>();
     }
 }

@@ -197,3 +197,10 @@ form {
 .d-flex.gap-2 > * {
     margin-right: 10px;
 }
+.list-group-item {
+    transition: all 0.2s ease-in-out;
+}
+
+    .list-group-item:hover {
+        background-color: #2c2c3e;
+    }

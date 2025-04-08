@@ -10,6 +10,7 @@ namespace SocialNetworkMusician.Data
             : base(options)
         {
         }
+        public DbSet<PlaylistTrack> PlaylistTracks { get; set; }
         public DbSet<MusicTrack> MusicTracks { get; set; }
         public DbSet<Playlist> Playlists { get; set; }
         public DbSet<Comment> Comments { get; set; }
@@ -40,13 +41,23 @@ namespace SocialNetworkMusician.Data
                 .HasForeignKey(f => f.FollowedId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-           
-            modelBuilder.Entity<Playlist>()
-                .HasMany(p => p.Tracks)
-                .WithMany(t => t.Playlists)
-                .UsingEntity(j => j.ToTable("PlaylistTracks"));
 
-            
+            modelBuilder.Entity<PlaylistTrack>()
+                 .HasKey(pt => pt.Id);
+
+            modelBuilder.Entity<PlaylistTrack>()
+                .HasOne(pt => pt.Playlist)
+                .WithMany(p => p.PlaylistTracks)
+                .HasForeignKey(pt => pt.PlaylistId)
+                .OnDelete(DeleteBehavior.Restrict); ;
+
+            modelBuilder.Entity<PlaylistTrack>()
+                .HasOne(pt => pt.MusicTrack)
+                .WithMany()
+                .HasForeignKey(pt => pt.MusicTrackId)
+                .OnDelete(DeleteBehavior.Restrict); ;
+
+
             modelBuilder.Entity<MusicTrack>()
                 .HasMany(m => m.Genres)
                 .WithMany(g => g.Tracks)

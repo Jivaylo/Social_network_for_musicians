@@ -17,16 +17,17 @@
         <p><strong>Uploaded at:</strong> @Model.UploadedAt.ToShortDateString()</p>
 
         <!-- Like & Delete -->
-        <div class="d-flex gap-2 mt-4 mb-4">
-            <form asp-action="Like" asp-route-id="@Model.Id" method="post">
-                <button type="submit" class="btn btn-outline-success w-100 px-4">
-                    ❤️ Like (@Model.LikeCount)
+        <div class="d-flex align-items-center gap-3 mt-3">
+
+            <form method="post" asp-action="Like" asp-route-id="@Model.Id">
+                <button type="submit" class="btn btn-outline-success btn-sm">
+                    👍 Like (@Model.LikeCount)
                 </button>
             </form>
 
-            <form asp-action="Dislike" asp-route-id="@Model.Id" method="post">
-                <button type="submit" class="btn btn-outline-danger w-100 px-4">
-                    👎 Dislike (@Model.DislikeCount)
+            <form method="post" asp-action="Dislike" asp-route-id="@Model.Id">
+                <button type="submit" class="btn btn-outline-danger btn-sm">
+                    👎 Dislike
                 </button>
             </form>
         
@@ -46,21 +47,24 @@
         <!-- Comments -->
         <hr class="bg-light mt-5 mb-4" />
 
-        <h4 class="mb-3">💬 Comments</h4>
+        <h4 class="mt-5">💬 Comments</h4>
 
         @if (Model.Comments.Any())
         {
-            @foreach (var comment in Model.Comments)
-            {
-                <div class="mb-3 p-3 rounded bg-secondary text-light">
-                    <strong>@comment.UserName</strong> <span class="text-muted" style="font-size: 0.85rem;">@comment.CreatedAt.ToShortDateString()</span>
-                    <p class="mb-0 mt-1">@comment.Content</p>
-                </div>
-            }
+            <div class="list-group mt-3">
+                @foreach (var comment in Model.Comments)
+                {
+                    <div class="list-group-item bg-dark text-light border-secondary mb-2 rounded shadow-sm">
+                        <strong class="text-warning">@comment.UserName</strong>
+                        <p class="mb-1">@comment.Content</p>
+                        <small class="text-muted">@comment.CreatedAt.ToString("g")</small>
+                    </div>
+                }
+            </div>
         }
         else
         {
-            <p class="text-muted">No comments yet. Be the first to share your thoughts!</p>
+            <p class="text-muted">No comments yet. Be the first one to say something 🎤</p>
         }
 
         @if (User.Identity?.IsAuthenticated == true)

@@ -41,6 +41,7 @@ namespace SocialNetworkMusician.Controllers
             return View(tracks);
         }
 
+        [Authorize]
         public async Task<IActionResult> Details(Guid id)
         {
             var user = await _userManager.GetUserAsync(User);

@@ -170,21 +170,6 @@ namespace SocialNetworkMusician.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("MusicTrackPlaylist", b =>
-                {
-                    b.Property<Guid>("PlaylistsId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("TracksId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("PlaylistsId", "TracksId");
-
-                    b.HasIndex("TracksId");
-
-                    b.ToTable("PlaylistTracks", (string)null);
-                });
-
             modelBuilder.Entity("SocialNetworkMusician.Data.Data.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -443,6 +428,9 @@ namespace SocialNetworkMusician.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("MusicTrackId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -454,9 +442,32 @@ namespace SocialNetworkMusician.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("MusicTrackId");
+
                     b.HasIndex("UserId");
 
                     b.ToTable("Playlists");
+                });
+
+            modelBuilder.Entity("SocialNetworkMusician.Data.Data.PlaylistTrack", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("MusicTrackId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PlaylistId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MusicTrackId");
+
+                    b.HasIndex("PlaylistId");
+
+                    b.ToTable("PlaylistTracks");
                 });
 
             modelBuilder.Entity("SocialNetworkMusician.Data.Data.TrackCategory", b =>
@@ -537,21 +548,6 @@ namespace SocialNetworkMusician.Data.Migrations
                     b.HasOne("SocialNetworkMusician.Data.Data.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("MusicTrackPlaylist", b =>
-                {
-                    b.HasOne("SocialNetworkMusician.Data.Data.Playlist", null)
-                        .WithMany()
-                        .HasForeignKey("PlaylistsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SocialNetworkMusician.Data.Data.MusicTrack", null)
-                        .WithMany()
-                        .HasForeignKey("TracksId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -663,6 +659,10 @@ namespace SocialNetworkMusician.Data.Migrations
 
             modelBuilder.Entity("SocialNetworkMusician.Data.Data.Playlist", b =>
                 {
+                    b.HasOne("SocialNetworkMusician.Data.Data.MusicTrack", null)
+                        .WithMany("Playlists")
+                        .HasForeignKey("MusicTrackId");
+
                     b.HasOne("SocialNetworkMusician.Data.Data.ApplicationUser", "User")
                         .WithMany("Playlists")
                         .HasForeignKey("UserId")
@@ -670,6 +670,25 @@ namespace SocialNetworkMusician.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SocialNetworkMusician.Data.Data.PlaylistTrack", b =>
+                {
+                    b.HasOne("SocialNetworkMusician.Data.Data.MusicTrack", "MusicTrack")
+                        .WithMany()
+                        .HasForeignKey("MusicTrackId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SocialNetworkMusician.Data.Data.Playlist", "Playlist")
+                        .WithMany("PlaylistTracks")
+                        .HasForeignKey("PlaylistId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("MusicTrack");
+
+                    b.Navigation("Playlist");
                 });
 
             modelBuilder.Entity("SocialNetworkMusician.Data.Data.ApplicationUser", b =>
@@ -690,6 +709,13 @@ namespace SocialNetworkMusician.Data.Migrations
                     b.Navigation("Dislikes");
 
                     b.Navigation("Likes");
+
+                    b.Navigation("Playlists");
+                });
+
+            modelBuilder.Entity("SocialNetworkMusician.Data.Data.Playlist", b =>
+                {
+                    b.Navigation("PlaylistTracks");
                 });
 
             modelBuilder.Entity("SocialNetworkMusician.Data.Data.TrackCategory", b =>
