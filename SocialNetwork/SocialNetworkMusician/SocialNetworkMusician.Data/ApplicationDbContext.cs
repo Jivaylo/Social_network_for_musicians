@@ -20,6 +20,7 @@ namespace SocialNetworkMusician.Data
         public DbSet<TrackCategory> TrackCategories { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Dislike> Dislikes { get; set; }
+        public DbSet<Message> Messages { get; set; } 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -39,6 +40,18 @@ namespace SocialNetworkMusician.Data
                 .HasOne(f => f.Followed)
                 .WithMany(u => u.Followers)
                 .HasForeignKey(f => f.FollowedId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Message>()
+                .HasOne(m => m.Sender)
+                .WithMany()
+                .HasForeignKey(m => m.SenderId)
+                .OnDelete(DeleteBehavior.Restrict); 
+
+            modelBuilder.Entity<Message>()
+                .HasOne(m => m.Recipient)
+                .WithMany()
+                .HasForeignKey(m => m.RecipientId)
                 .OnDelete(DeleteBehavior.Restrict);
 
 
