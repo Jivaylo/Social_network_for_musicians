@@ -1,7 +1,15 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Identity
+@{
     var noFooterControllers = new[] { "Tracks", "Admin", "Playlists", "Users" };
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
     var showFooter = !noFooterControllers.Contains(currentController);
+    if (User.Identity?.IsAuthenticated == true)
+    {
+        var db = Context.RequestServices.GetService(typeof(SocialNetworkMusician.Data.ApplicationDbContext)) as SocialNetworkMusician.Data.ApplicationDbContext;
+        var userManager = Context.RequestServices.GetService(typeof(UserManager<SocialNetworkMusician.Data.Data.ApplicationUser>)) as UserManager<SocialNetworkMusician.Data.Data.ApplicationUser>;
+        var user = await userManager.GetUserAsync(User);
+        ViewBag.UnreadCount = db.Messages.Count(m => m.RecipientId == user.Id && !m.IsRead);
+    }
 }
 
 <!DOCTYPE html>

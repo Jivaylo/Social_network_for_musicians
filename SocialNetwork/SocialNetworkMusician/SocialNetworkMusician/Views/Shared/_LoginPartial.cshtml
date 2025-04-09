@@ -28,7 +28,13 @@
                 </li>
                 <li><hr class="dropdown-divider bg-secondary" /></li>
                 <li>
-                    <a class="dropdown-item text-white" asp-controller="Messages" asp-action="Inbox">📥 Inbox</a>
+                    <a class="dropdown-item d-flex justify-content-between align-items-center text-white" asp-controller="Messages" asp-action="Inbox">
+                        <span>📥 Inbox</span>
+                        @if (ViewBag.UnreadCount != null && (int)ViewBag.UnreadCount > 0)
+                        {
+                            <span class="badge bg-danger ms-2">@ViewBag.UnreadCount</span>
+                        }
+                    </a>
                 </li>
                 <li>
                     <a class="dropdown-item text-white" asp-controller="Messages" asp-action="Sent">📤 Sent</a>
