@@ -28,6 +28,7 @@
                     <a asp-action="Profile" asp-route-id="@user.Id" class="text-warning text-decoration-none">
                         @user.DisplayName
                     </a>
+                    <span class="badge bg-info text-dark ms-2">👥 @user.FollowersCount</span>
                 </td>
                 <td>@user.Email</td>
                 <td>@(user.JoinedDate?.ToShortDateString() ?? "N/A")</td>

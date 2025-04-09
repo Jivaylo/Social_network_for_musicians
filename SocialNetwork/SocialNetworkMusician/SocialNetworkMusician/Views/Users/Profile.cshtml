@@ -22,9 +22,8 @@
                 <strong>Tracks Uploaded:</strong> @Model.TrackCount
             </li>
             <li class="list-group-item">
-                <strong>Followers:</strong> @Model.FollowersCount
-                <br />
-                <strong>Following:</strong> @Model.FollowingCount
+                <span class="badge bg-info text-dark me-2">👥 Followers: @Model.FollowersCount</span>
+                <span class="badge bg-secondary text-light">➡️ Following: @Model.FollowingCount</span>
             </li>
         </ul>
     </div>

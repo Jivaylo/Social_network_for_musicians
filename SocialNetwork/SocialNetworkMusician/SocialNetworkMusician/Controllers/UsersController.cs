@@ -143,7 +143,9 @@ namespace SocialNetworkMusician.Controllers
                     DisplayName = user.DisplayName,
                     Email = user.Email,
                     JoinedDate = user.JoinedDate,
-                    IsFollowing = isFollowing
+                    IsFollowing = isFollowing,
+                    FollowersCount = await _context.Follows.CountAsync(f => f.FollowedId == user.Id),
+                    FollowingCount = await _context.Follows.CountAsync(f => f.FollowerId == user.Id)
                 });
             }
 
