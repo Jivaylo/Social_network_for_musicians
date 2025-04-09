@@ -6,19 +6,39 @@
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))
     {
-        <li class="nav-item">
-            <a class="nav-link text-light" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">👤 @UserManager.GetUserAsync(User).Result.DisplayName</a>
-        </li>
-        <li class="nav-item">
-            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="/" method="post">
-                <button type="submit" class="btn btn-outline-light ms-2">Logout</button>
-            </form>
+        var user = await UserManager.GetUserAsync(User);
+        var displayName = user.DisplayName ?? user.Email;
+        var profileImage = user.ProfileImageUrl ?? $"https://ui-avatars.com/api/?name={Uri.EscapeDataString(displayName)}&background=0D8ABC&color=fff";
+
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="@profileImage" alt="Profile" class="rounded-circle me-2" width="32" height="32" style="object-fit: cover;" />
+                <span>@displayName</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end bg-dark text-white border-secondary">
+                <li>
+                    <a class="dropdown-item text-white" asp-controller="Users" asp-action="Profile" asp-route-id="@user.Id">
+                        👤 View Profile
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item text-white" asp-controller="Users" asp-action="EditProfile">
+                        ✏️ Edit Profile
+                    </a>
+                </li>
+                <li><hr class="dropdown-divider bg-secondary" /></li>
+                <li>
+                    <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="/" method="post">
+                        <button type="submit" class="dropdown-item text-danger">🚪 Logout</button>
+                    </form>
+                </li>
+            </ul>
         </li>
     }
     else
     {
         <li class="nav-item">
-            <a class="btn btn-outline-light" asp-area="Identity" asp-page="/Account/Register">Register</a>
+            <a class="btn btn-outline-light me-2" asp-area="Identity" asp-page="/Account/Register">Register</a>
         </li>
         <li class="nav-item">
             <a class="btn btn-primary" asp-area="Identity" asp-page="/Account/Login">Login</a>
