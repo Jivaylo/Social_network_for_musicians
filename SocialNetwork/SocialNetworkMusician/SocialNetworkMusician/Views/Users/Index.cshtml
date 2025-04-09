@@ -32,16 +32,19 @@
                 <td>@user.Email</td>
                 <td>@(user.JoinedDate?.ToShortDateString() ?? "N/A")</td>
                 <td>
-                    <form asp-action="@(user.IsFollowing ? "Unfollow" : "Follow")" method="post">
-                        <input type="hidden" name="userId" value="@user.Id" />
-                        <button class="btn btn-sm btn-outline-@(user.IsFollowing ? "danger" : "primary")">
-                            @(user.IsFollowing ? "Unfollow" : "Follow")
-                        </button>
-                    </form>
-                    <form asp-controller="Messages" asp-action="Compose" method="get" class="d-inline">
-                        <input type="hidden" name="recipientId" value="@user.Id" />
-                        <button class="btn btn-sm btn-outline-info">💬 Message</button>
-                    </form>
+                    <div class="d-flex flex-wrap gap-2">
+                        <form asp-action="@(user.IsFollowing ? "Unfollow" : "Follow")" method="post" class="d-inline">
+                            <input type="hidden" name="userId" value="@user.Id" />
+                            <button class="btn btn-sm btn-outline-@(user.IsFollowing ? "danger" : "success") px-3">
+                                @(user.IsFollowing ? "🚫 Unfollow" : "➕ Follow")
+                            </button>
+                        </form>
+
+                        <form asp-controller="Messages" asp-action="Compose" method="get" class="d-inline">
+                            <input type="hidden" name="recipientId" value="@user.Id" />
+                            <button class="btn btn-sm btn-outline-info px-3">💬 Message</button>
+                        </form>
+                    </div>
                 </td>
             </tr>
         }

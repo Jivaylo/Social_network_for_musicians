@@ -32,24 +32,21 @@
     <div class="col-md-6 text-end">
         @if (User.Identity?.IsAuthenticated == true && User.Identity.Name != Model.Email)
         {
-            <form asp-action="@(Model.IsFollowing ? "Unfollow" : "Follow")" asp-controller="Users" method="post">
-                <input type="hidden" name="userId" value="@Model.Id" />
-                <button class="btn btn-@(Model.IsFollowing ? "danger" : "primary") mt-2">
-                    @(Model.IsFollowing ? "Unfollow" : "Follow")
-                </button>
-            </form>
-        }
-        @if (User.Identity?.IsAuthenticated == true && User.Identity.Name != Model.Email)
-        {
-            <form asp-controller="Messages" asp-action="Compose" method="get">
-                <input type="hidden" name="recipientId" value="@Model.Id" />
-                <button class="btn btn-sm btn-outline-info mt-2">
-                    💬 Send Message
-                </button>
-            </form>
+            <div class="d-flex justify-content-end gap-2 flex-wrap">
+                <form asp-action="@(Model.IsFollowing ? "Unfollow" : "Follow")" asp-controller="Users" method="post">
+                    <input type="hidden" name="userId" value="@Model.Id" />
+                    <button class="btn btn-sm btn-outline-@(Model.IsFollowing ? "danger" : "success") px-3">
+                        @(Model.IsFollowing ? "🚫 Unfollow" : "➕ Follow")
+                    </button>
+                </form>
+
+                <form asp-controller="Messages" asp-action="Compose" method="get">
+                    <input type="hidden" name="recipientId" value="@Model.Id" />
+                    <button class="btn btn-sm btn-outline-info px-3">💬 Message</button>
+                </form>
+            </div>
         }
     </div>
-</div>
 
 
 <h4 class="text-white mt-5">🎵 Tracks</h4>
