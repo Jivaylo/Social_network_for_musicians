@@ -1,0 +1,27 @@
+﻿@model IEnumerable<MessageViewModel>
+
+<h2 class="text-white mb-4">📥 Inbox</h2>
+
+<table class="table table-dark table-hover">
+    <thead>
+        <tr>
+            <th>From</th>
+            <th>Message</th>
+            <th>Sent At</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var message in Model)
+        {
+            <tr class="@(message.IsRead ? "" : "fw-bold")">
+                <td>@message.SenderName</td>
+                <td>@(message.Content.Length > 50 ? message.Content[..50] + "..." : message.Content)</td>
+                <td>@message.SentAt.ToString("g")</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@message.Id" class="btn btn-sm btn-outline-info">View</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

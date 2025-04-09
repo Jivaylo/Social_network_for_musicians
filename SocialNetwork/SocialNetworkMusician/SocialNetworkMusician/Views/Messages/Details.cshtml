@@ -1,0 +1,14 @@
+﻿@model MessageViewModel
+
+<h2 class="text-white mb-4">📄 Message Details</h2>
+
+<div class="card bg-dark text-light p-4 mb-4">
+    <p><strong>From:</strong> @Model.SenderName</p>
+    <p><strong>To:</strong> @Model.RecipientName</p>
+    <p><strong>Sent:</strong> @Model.SentAt.ToString("g")</p>
+    <hr class="bg-light" />
+    <p>@Model.Content</p>
+</div>
+
+<a asp-action="Inbox" class="btn btn-outline-light">⬅ Back to Inbox</a>
+

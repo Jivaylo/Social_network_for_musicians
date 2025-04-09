@@ -28,6 +28,13 @@
                 </li>
                 <li><hr class="dropdown-divider bg-secondary" /></li>
                 <li>
+                    <a class="dropdown-item text-white" asp-controller="Messages" asp-action="Inbox">📥 Inbox</a>
+                </li>
+                <li>
+                    <a class="dropdown-item text-white" asp-controller="Messages" asp-action="Sent">📤 Sent</a>
+                </li>
+                <li><hr class="dropdown-divider bg-secondary" /></li>
+                <li>
                     <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="/" method="post">
                         <button type="submit" class="dropdown-item text-danger">🚪 Logout</button>
                     </form>
