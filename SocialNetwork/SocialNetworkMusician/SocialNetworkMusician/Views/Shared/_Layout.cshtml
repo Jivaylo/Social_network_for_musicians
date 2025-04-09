@@ -1,5 +1,5 @@
 ﻿@{
-    var noFooterControllers = new[] { "Tracks", "Admin", "Playlists" };
+    var noFooterControllers = new[] { "Tracks", "Admin", "Playlists", "Users" };
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
     var showFooter = !noFooterControllers.Contains(currentController);
 }

@@ -214,3 +214,7 @@ td.d-flex {
     justify-content: flex-start;
     align-items: center;
 }
+.btn-sm {
+    font-size: 0.85rem;
+    border-radius: 20px;
+}

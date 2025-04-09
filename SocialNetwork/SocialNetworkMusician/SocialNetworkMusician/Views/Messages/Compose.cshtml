@@ -2,12 +2,21 @@
 
 <h2 class="text-white mb-4">📝 Message to @Model.RecipientName</h2>
 
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">Please complete all fields.</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@Html.Raw(TempData["Error"])</div>
+}
+
 <form asp-action="Compose" method="post" class="text-light">
     <input type="hidden" asp-for="RecipientId" />
 
     <div class="mb-3">
         <label asp-for="Content" class="form-label">Message</label>
-        <textarea asp-for="Content" class="form-control" rows="5" placeholder="Say something nice..." required></textarea>
+        <textarea asp-for="Content" class="form-control" rows="5" required></textarea>
         <span asp-validation-for="Content" class="text-danger"></span>
     </div>
 

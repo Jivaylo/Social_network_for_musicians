@@ -82,26 +82,42 @@ namespace SocialNetworkMusician.Controllers
         [HttpPost]
         public async Task<IActionResult> Compose(ComposeMessageViewModel model)
         {
+            if (string.IsNullOrEmpty(model.RecipientId))
+                model.RecipientId = "some-valid-user-id-from-db";
+           
             var sender = await _userManager.GetUserAsync(User);
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var message = new Message
+                foreach (var entry in ModelState)
                 {
-                    Id = Guid.NewGuid(),
-                    SenderId = sender.Id,
-                    RecipientId = model.RecipientId,
-                    Content = model.Content
-                };
+                    foreach (var error in entry.Value.Errors)
+                    {
+                        TempData["Error"] += $"❌ {entry.Key}: {error.ErrorMessage}<br/>";
+                    }
+                }
 
-                _context.Messages.Add(message);
-                await _context.SaveChangesAsync();
+                var recipient = await _userManager.FindByIdAsync(model.RecipientId);
+                model.RecipientName = recipient?.DisplayName ?? "Unknown";
 
-                return RedirectToAction("Sent");
+                return View(model);
             }
 
-            return View(model);
+            var message = new Message
+            {
+                Id = Guid.NewGuid(),
+                SenderId = sender.Id,
+                RecipientId = model.RecipientId,
+                Content = model.Content,
+                SentAt = DateTime.UtcNow
+            };
+
+            _context.Messages.Add(message);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Sent");
         }
+
 
         public async Task<IActionResult> Details(Guid id)
         {

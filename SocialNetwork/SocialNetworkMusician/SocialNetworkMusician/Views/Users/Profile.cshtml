@@ -39,6 +39,15 @@
                 </button>
             </form>
         }
+        @if (User.Identity?.IsAuthenticated == true && User.Identity.Name != Model.Email)
+        {
+            <form asp-controller="Messages" asp-action="Compose" method="get">
+                <input type="hidden" name="recipientId" value="@Model.Id" />
+                <button class="btn btn-sm btn-outline-info mt-2">
+                    💬 Send Message
+                </button>
+            </form>
+        }
     </div>
 </div>
 

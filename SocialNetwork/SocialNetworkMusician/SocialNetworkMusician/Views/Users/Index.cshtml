@@ -38,6 +38,10 @@
                             @(user.IsFollowing ? "Unfollow" : "Follow")
                         </button>
                     </form>
+                    <form asp-controller="Messages" asp-action="Compose" method="get" class="d-inline">
+                        <input type="hidden" name="recipientId" value="@user.Id" />
+                        <button class="btn btn-sm btn-outline-info">💬 Message</button>
+                    </form>
                 </td>
             </tr>
         }
