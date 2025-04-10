@@ -51,6 +51,7 @@ namespace SocialNetworkMusician.Controllers
                 .Include(t => t.User)
                 .Include(t => t.Category)
                 .Include(t => t.Likes)
+                .Include(t => t.Dislikes)
                 .Include(t => t.Comments)
                 .ThenInclude(c => c.User)
                 .FirstOrDefaultAsync(t => t.Id == id);
@@ -68,8 +69,10 @@ namespace SocialNetworkMusician.Controllers
                 UploadedAt = track.UploadedAt,
                 UserName = track.User?.UserName,
                 LikeCount = track.Likes.Count,
+                DislikeCount = track.Dislikes.Count,
                 PlayCount = track.PlayCount,
                 IsLikedByCurrentUser = currentUserId != null && track.Likes.Any(l => l.UserId == currentUserId),
+                IsDislikedByCurrentUser = currentUserId != null && track.Dislikes.Any(d => d.UserId == currentUserId),
                 Comments = track.Comments.Select(c => new CommentViewModel
                 {
                     UserName = c.User.UserName,
@@ -192,6 +195,7 @@ namespace SocialNetworkMusician.Controllers
         public async Task<IActionResult> Dislike(Guid id)
         {
             var user = await _userManager.GetUserAsync(User);
+
             var track = await _context.MusicTracks
                 .Include(t => t.Dislikes)
                 .Include(t => t.Likes)
@@ -204,12 +208,14 @@ namespace SocialNetworkMusician.Controllers
             var like = track.Likes.FirstOrDefault(l => l.UserId == user.Id);
 
             if (dislike != null)
+            {
+              
                 _context.Dislikes.Remove(dislike);
+            }
             else
             {
-                if (like != null)
-                    _context.Likes.Remove(like);
-
+                
+                if (like != null) _context.Likes.Remove(like); 
                 _context.Dislikes.Add(new Dislike
                 {
                     Id = Guid.NewGuid(),

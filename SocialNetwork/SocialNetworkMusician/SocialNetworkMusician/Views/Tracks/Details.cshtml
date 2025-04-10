@@ -20,14 +20,14 @@
   
         <div class="d-flex align-items-center gap-3 mt-3">
             <form method="post" asp-action="Like" asp-route-id="@Model.Id">
-                <button type="submit" class="btn btn-outline-success btn-sm">
+                <button type="submit" class="btn btn-sm @(Model.IsLikedByCurrentUser ? "btn-success" : "btn-outline-success")">
                     👍 Like (@Model.LikeCount)
                 </button>
             </form>
 
             <form method="post" asp-action="Dislike" asp-route-id="@Model.Id">
-                <button type="submit" class="btn btn-outline-danger btn-sm">
-                    👎 Dislike
+                <button type="submit" class="btn btn-sm @(Model.IsDislikedByCurrentUser ? "btn-danger" : "btn-outline-danger")">
+                    👎 Dislike (@Model.DislikeCount)
                 </button>
             </form>
 
