@@ -1,0 +1,22 @@
+﻿@model IEnumerable<TrackViewModel>
+<h2 class="text-white mb-4">🔥 Trending Tracks</h2>
+
+@foreach (var track in Model)
+{
+    var total = track.LikeCount + track.DislikeCount;
+    var likePercent = total > 0 ? (int)((double)track.LikeCount / total * 100) : 0;
+
+    <div class="card bg-dark text-white mb-4 p-3 shadow">
+        <h5>@track.Title by @track.UserName</h5>
+        <p>@track.Description</p>
+        <p><strong>Likes:</strong> 👍 @track.LikeCount | 👎 @track.DislikeCount | 🔁 Plays: @track.PlayCount</p>
+
+        <div class="progress" style="height: 12px;">
+            <div class="progress-bar bg-success" role="progressbar" style="width: @likePercent%;" aria-valuenow="@likePercent" aria-valuemin="0" aria-valuemax="100"></div>
+            <div class="progress-bar bg-danger" role="progressbar" style="width: @(100 - likePercent)%;" aria-valuenow="@(100 - likePercent)" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+
+        <a asp-action="Details" asp-route-id="@track.Id" class="btn btn-sm btn-outline-info mt-2">🎧 Listen</a>
+    </div>
+}
+

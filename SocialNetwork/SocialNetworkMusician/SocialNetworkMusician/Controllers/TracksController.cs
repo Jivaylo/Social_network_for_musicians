@@ -266,6 +266,33 @@ namespace SocialNetworkMusician.Controllers
 
             return Ok();
         }
+        [AllowAnonymous]
+        public async Task<IActionResult> Trending()
+        {
+            var tracks = await _context.MusicTracks
+                .Include(t => t.Likes)
+                .Include(t => t.Dislikes)
+                .Include(t => t.Category)
+                .Include(t => t.User)
+                .OrderByDescending(t => t.Likes.Count) 
+                .Take(10)
+                .Select(t => new TrackViewModel
+                {
+                    Id = t.Id,
+                    Title = t.Title,
+                    Description = t.Description,
+                    FileUrl = t.FileUrl,
+                    CategoryName = t.Category.Name,
+                    UserName = t.User.DisplayName,
+                    LikeCount = t.Likes.Count,
+                    DislikeCount = t.Dislikes.Count,
+                    UploadedAt = t.UploadedAt,
+                    PlayCount = t.PlayCount
+                })
+                .ToListAsync();
+
+            return View(tracks);
+        }
 
     }
 }
