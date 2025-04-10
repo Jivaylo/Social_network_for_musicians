@@ -1,7 +1,7 @@
 ﻿@model TrackViewModel
 
 <div class="container mt-5 mb-5 px-4" style="max-width: 800px;">
-    <h2 class="text-white mb-4 text-center">Upload New Track</h2>
+    <h2 class="text-white mb-4 text-center">Submit New Track</h2>
 
     <form asp-action="Create" method="post" enctype="multipart/form-data">
         <div class="form-group mb-3">
@@ -12,20 +12,26 @@
 
         <div class="form-group mb-3">
             <label asp-for="Description"></label>
-            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
-            <span asp-validation-for="Description" class="text-danger"></span>
+            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
         </div>
 
-        <div class="form-group mb-3">
-            <label asp-for="FileUrl"></label>
-            <input asp-for="FileUrl" class="form-control" />
+
+        <div class="form-group mb-4">
+            <label asp-for="MusicFile" class="form-label text-white">🎵 Choose a Music File</label>
+            <div class="input-group">
+                <label class="input-group-text bg-success text-white fw-bold" for="MusicFile" style="cursor: pointer;">
+                    <i class="bi bi-upload"></i> Upload
+                </label>
+                <input asp-for="MusicFile" type="file" accept=".mp3,.wav" class="form-control bg-dark text-white" id="MusicFile" onchange="showFileName(this)" />
+            </div>
+            <small id="file-name" class="form-text text-info mt-2"></small>
+            <span asp-validation-for="MusicFile" class="text-danger"></span>
         </div>
+     
 
         <div class="form-group mb-3">
-            <label class="custom-file-upload">
-                <input type="file" name="MusicFile" accept=".mp3,.wav" />
-                🎵 Upload Music File
-            </label>
+            <label asp-for="FileUrl">🎧 Or Paste Music URL</label>
+            <input asp-for="FileUrl" class="form-control" placeholder="https://example.com/track.mp3" />
         </div>
 
         <div class="form-group mb-4">
@@ -33,16 +39,25 @@
             <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.Categories">
                 <option value="">-- Select Category --</option>
             </select>
-            <span asp-validation-for="CategoryId" class="text-danger"></span>
         </div>
 
-        <div class="d-flex justify-content-between gap-2">
-            <button type="submit" class="btn btn-success px-4">Upload</button>
-            <a asp-action="Index" class="btn btn-secondary px-4">Cancel</a>
+        <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-success">Submit</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
         </div>
     </form>
 </div>
 
 @section Scripts {
+    <script>
+        function showFileName(input) {
+            const fileLabel = document.getElementById('file-name');
+            if (input.files && input.files.length > 0) {
+                fileLabel.textContent = `Selected file: 🎧 ${input.files[0].name}`;
+            } else {
+                fileLabel.textContent = '';
+            }
+        }
+    </script>
     <partial name="_ValidationScriptsPartial" />
 }

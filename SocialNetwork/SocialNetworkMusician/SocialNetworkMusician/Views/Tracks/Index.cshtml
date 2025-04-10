@@ -28,7 +28,7 @@
     </tbody>
 </table>
 
-@if (User.IsInRole("Admin"))
+@if (User.Identity?.IsAuthenticated == true)
 {
-    <a class="btn btn-success mt-3" asp-action="Create">➕ Upload New Track</a>
+    <a class="btn btn-success mt-3" asp-action="Create">➕ Submit New Track</a>
 }

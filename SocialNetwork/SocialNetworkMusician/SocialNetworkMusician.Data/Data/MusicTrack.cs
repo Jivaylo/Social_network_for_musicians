@@ -35,10 +35,7 @@ namespace SocialNetworkMusician.Data.Data
         public ApplicationUser User { get; set; } = null!;
 
         public Guid? CategoryId { get; set; }
-        public enum TrackStatus { Pending, Approved, Rejected }
-
-        public TrackStatus Status { get; set; } = TrackStatus.Pending;
-
+       
         [MaxLength(300)]
         public string? AdminNote { get; set; }
 

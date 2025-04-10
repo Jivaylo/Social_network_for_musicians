@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.ComponentModel.DataAnnotations;
 
 namespace SocialNetworkMusician.Models
 {
@@ -12,10 +13,13 @@ namespace SocialNetworkMusician.Models
 
         [Display(Name = "Description")]
         public string? Description { get; set; }
+        [Display(Name = "Music File")]
+        public IFormFile? MusicFile { get; set; }
 
-        [Required]
+
         [Display(Name = "Music File URL")]
-        public string FileUrl { get; set; } = null!;
+        [Url(ErrorMessage = "Please enter a valid URL.")]
+        public string? FileUrl { get; set; }
 
         [Display(Name = "Category")]
         public Guid? CategoryId { get; set; }
@@ -34,6 +38,7 @@ namespace SocialNetworkMusician.Models
 
 
         public List<CommentViewModel> Comments { get; set; } = new();
-        public string NewComment { get; set; } = null!;
+        [BindNever]
+        public string? NewComment { get; set; }
     }
 }

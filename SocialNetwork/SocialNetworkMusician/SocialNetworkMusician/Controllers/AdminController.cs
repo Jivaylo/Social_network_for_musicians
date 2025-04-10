@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using SocialNetworkMusician.Data;
 using SocialNetworkMusician.Data.Data;
 using SocialNetworkMusician.Models;
+using static SocialNetworkMusician.Data.Data.MusicTrack;
 
 namespace SocialNetworkMusician.Controllers
 {
@@ -116,6 +117,7 @@ namespace SocialNetworkMusician.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
+
     }
 }
 

@@ -7,6 +7,7 @@ using SocialNetworkMusician.Data;
 using SocialNetworkMusician.Data.Data;
 using SocialNetworkMusician.Models;
 using System;
+using static SocialNetworkMusician.Data.Data.MusicTrack;
 
 namespace SocialNetworkMusician.Controllers
 {
@@ -26,6 +27,8 @@ namespace SocialNetworkMusician.Controllers
             var tracks = await _context.MusicTracks
                 .Include(t => t.User)
                 .Include(t => t.Category)
+                .Include(t => t.Likes)
+                .Include(t => t.Dislikes)
                 .Select(t => new TrackViewModel
                 {
                     Id = t.Id,
@@ -34,12 +37,17 @@ namespace SocialNetworkMusician.Controllers
                     FileUrl = t.FileUrl,
                     UploadedAt = t.UploadedAt,
                     UserName = t.User.UserName,
-                    CategoryName = t.Category.Name
+                    CategoryName = t.Category.Name,
+                    LikeCount = t.Likes.Count,
+                    DislikeCount = t.Dislikes.Count,
+                    PlayCount = t.PlayCount
                 })
                 .ToListAsync();
 
-            return View(tracks); 
+
+            return View(tracks);
         }
+
 
         [Authorize]
         public async Task<IActionResult> Details(Guid id)
@@ -94,8 +102,7 @@ namespace SocialNetworkMusician.Controllers
             return View(vm);
         }
 
-        [Authorize]
-        [Authorize]
+        [Authorize] 
         public IActionResult Create()
         {
             ViewBag.Categories = new SelectList(_context.TrackCategories, "Id", "Name");
@@ -104,26 +111,39 @@ namespace SocialNetworkMusician.Controllers
 
         [HttpPost]
         [Authorize]
-        [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> Create(TrackViewModel model, IFormFile MusicFile)
+        public async Task<IActionResult> Create(TrackViewModel model, IFormFile? MusicFile)
         {
-            if (!ModelState.IsValid || MusicFile == null)
+            if (string.IsNullOrWhiteSpace(model.FileUrl) && MusicFile == null)
+            {
+                ModelState.AddModelError("", "You must provide either a music file or a URL.");
+            }
+
+            if (!ModelState.IsValid)
             {
                 ViewBag.Categories = new SelectList(_context.TrackCategories, "Id", "Name");
-                ModelState.AddModelError("", "Music file is required.");
                 return View(model);
             }
 
-            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
-            Directory.CreateDirectory(uploadsFolder);
+            string fileUrl;
 
-            var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(MusicFile.FileName);
-            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-            using (var stream = new FileStream(filePath, FileMode.Create))
+            if (MusicFile != null)
             {
-                await MusicFile.CopyToAsync(stream);
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+                Directory.CreateDirectory(uploadsFolder);
+
+                var uniqueFileName = Guid.NewGuid() + Path.GetExtension(MusicFile.FileName);
+                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await MusicFile.CopyToAsync(stream);
+                }
+
+                fileUrl = "/uploads/" + uniqueFileName;
+            }
+            else
+            {
+                fileUrl = model.FileUrl!;
             }
 
             var user = await _userManager.GetUserAsync(User);
@@ -133,7 +153,7 @@ namespace SocialNetworkMusician.Controllers
                 Id = Guid.NewGuid(),
                 Title = model.Title,
                 Description = model.Description,
-                FileUrl = "/uploads/" + uniqueFileName,
+                FileUrl = fileUrl,
                 CategoryId = model.CategoryId,
                 UploadedAt = DateTime.UtcNow,
                 UserId = user.Id
@@ -144,6 +164,8 @@ namespace SocialNetworkMusician.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> Delete(Guid id)
