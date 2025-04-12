@@ -223,3 +223,20 @@ td.d-flex {
     border-radius: 10px;
     padding: 3px 8px;
 }
+<style>
+.dropdown-menu-dark {
+    background-color: #1e1e2f;
+    border-radius: 8px;
+}
+
+.dropdown-menu-dark .dropdown-item {
+    color: #f1f1f1;
+    padding: 8px 16px;
+}
+
+    .dropdown-menu-dark .dropdown-item:hover {
+        background-color: #343a40;
+        color: #ffc107;
+    }
+
+</style>

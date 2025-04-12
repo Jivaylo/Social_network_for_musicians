@@ -37,26 +37,35 @@
                     <ul class="navbar-nav flex-grow-1">
                         @if (User.IsInRole("Admin"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-warning" asp-controller="Admin" asp-action="Index">Admin</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-warning" asp-controller="Admin" asp-action="Reports">📩 Reports</a>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-warning" href="#" data-bs-toggle="dropdown">👑 Admin</a>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="Index">Dashboard</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="Reports">📩 Reports</a></li>
+                                </ul>
                             </li>
                         }
+
                         <li class="nav-item">
-                            <a class="nav-link text-light" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-light" asp-controller="Home" asp-action="Index">🏠 Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-controller="Tracks" asp-action="Index">Tracks</a>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-light" href="#" data-bs-toggle="dropdown">🎵 Tracks</a>
+                            <ul class="dropdown-menu dropdown-menu-dark">
+                                <li><a class="dropdown-item" asp-controller="Tracks" asp-action="Index">All Tracks</a></li>
+                                <li><a class="dropdown-item" asp-controller="Tracks" asp-action="Trending">🔥 Trending</a></li>
+                                <li><a class="dropdown-item" asp-controller="Tracks" asp-action="Create">➕ Submit Track</a></li>
+                            </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-controller="Users" asp-action="Index">Users</a>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-light" href="#" data-bs-toggle="dropdown">👥 Users</a>
+                            <ul class="dropdown-menu dropdown-menu-dark">
+                                <li><a class="dropdown-item" asp-controller="Users" asp-action="Index">Browse</a></li>
+                                <li><a class="dropdown-item" asp-controller="Users" asp-action="MyProfile">My Profile</a></li>
+                            </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-controller="Tracks" asp-action="Trending">🔥 Trending</a>
-                        </li>
-                      
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
