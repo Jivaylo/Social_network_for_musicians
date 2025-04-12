@@ -1,0 +1,22 @@
+﻿@model ReportViewModel
+
+<h2 class="text-white mb-4">🚨 Report User or Track</h2>
+
+<form asp-action="Create" method="post">
+    <input type="hidden" asp-for="TrackId" />
+    <input type="hidden" asp-for="ReportedUserId" />
+
+    <div class="form-group mb-3">
+        <label asp-for="Reason" class="form-label text-white">Reason</label>
+        <textarea asp-for="Reason" class="form-control" rows="4" placeholder="Explain why you're reporting..." required></textarea>
+        <span asp-validation-for="Reason" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-danger">🚨 Submit Report</button>
+    <a asp-controller="Tracks" asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+

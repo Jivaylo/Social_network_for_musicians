@@ -31,6 +31,11 @@
                 </button>
             </form>
 
+            <form asp-controller="Reports" asp-action="Create" method="get">
+                <input type="hidden" name="trackId" value="@Model.Id" />
+                <button class="btn btn-sm btn-outline-warning">🚨 Report</button>
+            </form>
+
             @if (User.Identity?.IsAuthenticated == true &&
             (User.Identity.Name == Model.UserName || User.IsInRole("Admin")))
             {

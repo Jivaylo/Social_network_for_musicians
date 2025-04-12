@@ -117,6 +117,29 @@ namespace SocialNetworkMusician.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Reports()
+        {
+            var reports = await _context.Reports
+                .Include(r => r.Reporter)
+                .Include(r => r.ReportedUser)
+                .Include(r => r.Track)
+                .Select(r => new ReportViewModel
+                {
+                    Id = r.Id,
+                    ReporterEmail = r.Reporter.Email,
+                    ReportedUserEmail = r.ReportedUser != null ? r.ReportedUser.Email : null,
+                    TrackTitle = r.Track != null ? r.Track.Title : null,
+                    Reason = r.Reason,
+                    ReportedAt = r.ReportedAt,
+                    ReportedUserId = r.ReportedUserId,
+                    TrackId = r.TrackId
+                })
+                .OrderByDescending(r => r.ReportedAt)
+                .ToListAsync();
+
+            return View(reports);
+        }
 
     }
 }

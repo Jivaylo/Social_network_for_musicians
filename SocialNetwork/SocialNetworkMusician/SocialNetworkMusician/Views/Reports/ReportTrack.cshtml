@@ -1,0 +1,13 @@
+﻿@model ReportViewModel
+<h2 class="text-white">🚨 Report Track</h2>
+
+<form asp-action="ReportTrack" method="post">
+    <input type="hidden" asp-for="TrackId" />
+    <div class="form-group">
+        <label asp-for="Reason" class="text-white">Why are you reporting this track?</label>
+        <textarea asp-for="Reason" class="form-control"></textarea>
+        <span asp-validation-for="Reason" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-danger mt-3">Submit Report</button>
+</form>
+

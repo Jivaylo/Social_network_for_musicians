@@ -182,6 +182,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/User/Documents/SocialNetwork/Social_network_for_musicians/SocialNetwork/SocialNetworkMusician/SocialNetworkMusician/Views/Admin/Reports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUmVwb3J0cy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/User/Documents/SocialNetwork/Social_network_for_musicians/SocialNetwork/SocialNetworkMusician/SocialNetworkMusician/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
@@ -212,6 +216,18 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/User/Documents/SocialNetwork/Social_network_for_musicians/SocialNetwork/SocialNetworkMusician/SocialNetworkMusician/Views/Playlists/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGxheWxpc3RzXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/User/Documents/SocialNetwork/Social_network_for_musicians/SocialNetwork/SocialNetworkMusician/SocialNetworkMusician/Views/Reports/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0c1xDcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/User/Documents/SocialNetwork/Social_network_for_musicians/SocialNetwork/SocialNetworkMusician/SocialNetworkMusician/Views/Reports/ReportTrack.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0c1xSZXBvcnRUcmFjay5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/User/Documents/SocialNetwork/Social_network_for_musicians/SocialNetwork/SocialNetworkMusician/SocialNetworkMusician/Views/Reports/ReportUser.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0c1xSZXBvcnRVc2VyLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/User/Documents/SocialNetwork/Social_network_for_musicians/SocialNetwork/SocialNetworkMusician/SocialNetworkMusician/Views/Shared/Error.cshtml]

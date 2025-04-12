@@ -43,6 +43,11 @@
                     <input type="hidden" name="recipientId" value="@Model.Id" />
                     <button class="btn btn-sm btn-outline-info px-3">💬 Message</button>
                 </form>
+
+                <form asp-controller="Reports" asp-action="Create" method="get">
+                    <input type="hidden" name="reportedUserId" value="@Model.Id" />
+                    <button class="btn btn-sm btn-outline-warning px-3">🚨 Report User</button>
+                </form>
             </div>
         }
     </div>
