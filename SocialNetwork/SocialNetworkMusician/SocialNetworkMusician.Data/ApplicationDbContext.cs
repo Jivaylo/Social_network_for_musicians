@@ -21,6 +21,7 @@ namespace SocialNetworkMusician.Data
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Dislike> Dislikes { get; set; }
         public DbSet<Message> Messages { get; set; } 
+        public DbSet<Report> Reports { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -142,6 +143,24 @@ namespace SocialNetworkMusician.Data
                 .WithMany(t => t.Dislikes)
                 .HasForeignKey(d => d.MusicTrackId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Report>()
+                .HasOne(r => r.Reporter)
+                .WithMany()
+                .HasForeignKey(r => r.ReporterId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Report>()
+                .HasOne(r => r.ReportedUser)
+                .WithMany()
+                .HasForeignKey(r => r.ReportedUserId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Report>()
+                .HasOne(r => r.Track)
+                .WithMany()
+                .HasForeignKey(r => r.TrackId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }
