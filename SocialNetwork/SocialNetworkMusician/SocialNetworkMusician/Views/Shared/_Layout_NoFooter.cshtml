@@ -1,0 +1,90 @@
+﻿@using Microsoft.AspNetCore.Identity
+@{
+    var noFooterControllers = new[] { "Tracks", "Admin", "Playlists", "Users" };
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var showFooter = !noFooterControllers.Contains(currentController);
+    if (User.Identity?.IsAuthenticated == true)
+    {
+        var db = Context.RequestServices.GetService(typeof(SocialNetworkMusician.Data.ApplicationDbContext)) as SocialNetworkMusician.Data.ApplicationDbContext;
+        var userManager = Context.RequestServices.GetService(typeof(UserManager<SocialNetworkMusician.Data.Data.ApplicationUser>)) as UserManager<SocialNetworkMusician.Data.Data.ApplicationUser>;
+        var user = await userManager.GetUserAsync(User);
+        ViewBag.UnreadCount = db.Messages.Count(m => m.RecipientId == user.Id && !m.IsRead);
+    }
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SocialNetworkMusician</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/SocialNetworkMusician.styles.css" asp-append-version="true" />
+</head>
+
+<body style="background: linear-gradient(to right, #0f2027, #203a43, #2c5364); color: white; display: flex; flex-direction: column; min-height: 100vh;">
+
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand text-warning" asp-area="" asp-controller="Home" asp-action="Index">SoundSocial</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-warning" href="#" data-bs-toggle="dropdown">👑 Admin</a>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="Index">Dashboard</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="Reports">📩 Reports</a></li>
+                                </ul>
+                            </li>
+                        }
+
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-controller="Home" asp-action="Index">🏠 Home</a>
+                        </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-light" href="#" data-bs-toggle="dropdown">🎵 Tracks</a>
+                            <ul class="dropdown-menu dropdown-menu-dark">
+                                <li><a class="dropdown-item" asp-controller="Tracks" asp-action="Index">All Tracks</a></li>
+                                <li><a class="dropdown-item" asp-controller="Tracks" asp-action="Trending">🔥 Trending</a></li>
+                                <li><a class="dropdown-item" asp-controller="Tracks" asp-action="Create">➕ Submit Track</a></li>
+                            </ul>
+                        </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-light" href="#" data-bs-toggle="dropdown">👥 Users</a>
+                            <ul class="dropdown-menu dropdown-menu-dark">
+                                <li><a class="dropdown-item" asp-controller="Users" asp-action="Index">Browse</a></li>
+                                <li><a class="dropdown-item" asp-controller="Users" asp-action="MyProfile">My Profile</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="flex-grow-1">
+        <div class="container py-5">
+            @RenderBody()
+        </div>
+    </main>
+
+    
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>
