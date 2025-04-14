@@ -6,10 +6,38 @@
 
         <h2 class="text-center mb-4">🎵 @Model.Title</h2>
 
-        <audio controls class="w-100 mb-4" style="border-radius: 10px;" onplay="trackPlayed('@Model.Id')">
-            <source src="@Model.FileUrl" type="audio/mpeg" />
-            Your browser does not support the audio element.
-        </audio>
+        @if (Model.FileUrl.Contains("youtube.com") || Model.FileUrl.Contains("youtu.be"))
+        {
+            string videoId = "";
+
+            if (Model.FileUrl.Contains("watch?v="))
+            {
+                var uri = new Uri(Model.FileUrl);
+                var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+                if (query.ContainsKey("v"))
+                {
+                    videoId = query["v"];
+                }
+            }
+            else if (Model.FileUrl.Contains("youtu.be/"))
+            {
+                videoId = Model.FileUrl.Split("youtu.be/").Last();
+            }
+
+            var embedUrl = $"https://www.youtube.com/embed/{videoId}";
+
+            <div class="ratio ratio-16x9 mb-3">
+                <iframe src="@embedUrl" title="YouTube video" allowfullscreen></iframe>
+            </div>
+        }
+
+        else
+        {
+            <audio controls class="w-100 mb-4" style="border-radius: 10px;" onplay="trackPlayed('@Model.Id')">
+                <source src="@Model.FileUrl" type="audio/mpeg" />
+                Your browser does not support the audio element.
+            </audio>
+        }
 
         <p><strong>Description:</strong> @Model.Description</p>
         <p><strong>Category:</strong> @Model.CategoryName</p>

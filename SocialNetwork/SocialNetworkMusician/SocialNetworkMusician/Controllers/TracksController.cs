@@ -113,6 +113,10 @@ namespace SocialNetworkMusician.Controllers
         [Authorize]
         public async Task<IActionResult> Create(TrackViewModel model, IFormFile? MusicFile)
         {
+            if (string.IsNullOrWhiteSpace(model.FileUrl) || !(model.FileUrl.EndsWith(".mp3") || model.FileUrl.EndsWith(".wav") || model.FileUrl.Contains("youtube.com") || model.FileUrl.Contains("youtu.be")))
+            {
+                ModelState.AddModelError("FileUrl", "Please enter a valid YouTube, .mp3, or .wav URL.");
+            }
             if (string.IsNullOrWhiteSpace(model.FileUrl) && MusicFile == null)
             {
                 ModelState.AddModelError("", "You must provide either a music file or a URL.");
