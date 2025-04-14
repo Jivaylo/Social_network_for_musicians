@@ -40,7 +40,8 @@ namespace SocialNetworkMusician.Controllers
                     CategoryName = t.Category.Name,
                     LikeCount = t.Likes.Count,
                     DislikeCount = t.Dislikes.Count,
-                    PlayCount = t.PlayCount
+                    PlayCount = t.PlayCount,
+                    ImageUrl = t.ImageUrl 
                 })
                 .ToListAsync();
 

@@ -35,8 +35,14 @@
         }
 
         <div class="form-group mb-4">
-            <label class="form-label text-white">🎨 Change Track Image (optional)</label>
-            <input type="file" name="TrackImage" class="form-control" accept="image/*" />
+            <label for="TrackImage" class="form-label text-white d-block">🎨 Upload Track Image</label>
+
+            <label class="custom-file-upload btn btn-outline-light">
+                <input type="file" id="TrackImage" name="TrackImage" accept="image/*" onchange="displayFileName(this)" />
+                📁 Choose Image
+            </label>
+
+            <span id="file-name" class="text-info ms-2"></span>
         </div>
 
         <div class="d-flex justify-content-between gap-2">
@@ -48,6 +54,16 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        function displayFileName(input) {
+            const label = document.getElementById("file-name");
+            if (input.files.length > 0) {
+                label.textContent = input.files[0].name;
+            } else {
+                label.textContent = "";
+            }
+        }
+    </script>
 }
 
-}
+

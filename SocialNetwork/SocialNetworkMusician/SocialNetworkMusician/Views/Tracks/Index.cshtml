@@ -2,9 +2,10 @@
 
 <h2 class="text-white mb-4">🎶 All Tracks</h2>
 
-<table class="table table-dark table-hover">
+<table class="table table-dark table-hover align-middle">
     <thead>
         <tr>
+            <th style="width: 80px;">Cover</th>
             <th>Title</th>
             <th>Category</th>
             <th>Uploaded By</th>
@@ -16,6 +17,16 @@
         @foreach (var track in Model)
         {
             <tr>
+                <td>
+                    @if (!string.IsNullOrEmpty(track.ImageUrl))
+                    {
+                        <img src="@track.ImageUrl" alt="Track Image" class="img-thumbnail" style="height: 50px; width: 50px; object-fit: cover;" />
+                    }
+                    else
+                    {
+                        <span class="text-muted">No Image</span>
+                    }
+                </td>
                 <td>@track.Title</td>
                 <td>@track.CategoryName</td>
                 <td>@track.UserName</td>
@@ -30,5 +41,5 @@
 
 @if (User.Identity?.IsAuthenticated == true)
 {
-    <a class="btn btn-success mt-3" asp-action="Create">➕ Submit New Track</a>
+    <a asp-action="Create" class="btn btn-sm btn-success mt-3">➕ Submit New Track</a>
 }

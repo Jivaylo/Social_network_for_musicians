@@ -22,9 +22,9 @@
                 <label class="input-group-text bg-success text-white fw-bold" for="MusicFile" style="cursor: pointer;">
                     <i class="bi bi-upload"></i> Upload
                 </label>
-                <input asp-for="MusicFile" type="file" accept=".mp3,.wav" class="form-control bg-dark text-white" id="MusicFile" onchange="showFileName(this)" />
+                <input asp-for="MusicFile" type="file" accept=".mp3,.wav" class="form-control bg-dark text-white" id="MusicFile" onchange="showMusicFileName(this)" />
             </div>
-            <small id="file-name" class="form-text text-info mt-2"></small>
+            <small id="music-file-name" class="form-text text-info mt-2"></small>
             <span asp-validation-for="MusicFile" class="text-danger"></span>
         </div>
 
@@ -36,12 +36,16 @@
         </div>
 
         <div class="form-group mb-4">
-            <label class="form-label text-white">🎨 Upload Track Image</label>
-            <div class="custom-file">
-                <input asp-for="TrackImage" type="file" name="TrackImage" class="form-control" accept="image/*" />
-                <span asp-validation-for="TrackImage" class="text-danger"></span>
-            </div>
+            <label for="TrackImage" class="form-label text-white d-block">🎨 Upload Track Image</label>
+
+            <label class="custom-file-upload btn btn-outline-light">
+                <input type="file" id="TrackImage" name="TrackImage" accept="image/*" onchange="showImageFileName(this)" />
+                📁 Choose Image
+            </label>
+
+            <small id="image-file-name" class="text-info mt-2 d-block"></small>
         </div>
+
 
         <div class="form-group mb-4">
             <label asp-for="CategoryId">Category</label>
@@ -59,12 +63,21 @@
 
 @section Scripts {
     <script>
-        function showFileName(input) {
-            const fileLabel = document.getElementById('file-name');
+        function showMusicFileName(input) {
+            const label = document.getElementById('music-file-name');
             if (input.files && input.files.length > 0) {
-                fileLabel.textContent = `Selected file: 🎧 ${input.files[0].name}`;
+                label.textContent = `🎵 ${input.files[0].name}`;
             } else {
-                fileLabel.textContent = '';
+                label.textContent = '';
+            }
+        }
+
+        function showImageFileName(input) {
+            const label = document.getElementById('image-file-name');
+            if (input.files && input.files.length > 0) {
+                label.textContent = `🖼️ ${input.files[0].name}`;
+            } else {
+                label.textContent = '';
             }
         }
     </script>

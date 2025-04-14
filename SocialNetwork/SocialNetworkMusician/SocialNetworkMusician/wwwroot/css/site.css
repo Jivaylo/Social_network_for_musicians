@@ -239,4 +239,17 @@ td.d-flex {
         color: #ffc107;
     }
 
-</style>
+</style >
+.custom-file-upload {
+    display: inline-block;
+    padding: 8px 20px;
+    cursor: pointer;
+    background-color: transparent;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+.custom-file-upload input[type="file"] {
+    display: none;
+}
