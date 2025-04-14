@@ -31,13 +31,35 @@
                 videoId = Model.FileUrl.Split("youtu.be/").Last();
             }
 
-            var embedUrl = $"https://www.youtube.com/embed/{videoId}";
-
             <div class="ratio ratio-16x9 mb-3">
-                <iframe src="@embedUrl" title="YouTube video" allowfullscreen></iframe>
+                <iframe id="yt-player" width="100%" height="400" src="https://www.youtube.com/embed/@videoId?enablejsapi=1"
+                        title="YouTube video"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen></iframe>
             </div>
-        }
 
+            <script src="https://www.youtube.com/iframe_api"></script>
+            <script>
+                let ytPlayer;
+                let playCounted = false;
+
+                function onYouTubeIframeAPIReady() {
+                    ytPlayer = new YT.Player('yt-player', {
+                        events: {
+                            'onStateChange': onPlayerStateChange
+                        }
+                    });
+                }
+
+                function onPlayerStateChange(event) {
+                    if (event.data === YT.PlayerState.PLAYING && !playCounted) {
+                        playCounted = true;
+                        trackPlayed('@Model.Id');
+                    }
+                }
+            </script>
+        }
         else
         {
             <audio controls class="w-100 mb-4" style="border-radius: 10px;" onplay="trackPlayed('@Model.Id')">
@@ -45,6 +67,8 @@
                 Your browser does not support the audio element.
             </audio>
         }
+
+
 
         <p><strong>Description:</strong> @Model.Description</p>
         <p><strong>Category:</strong> @Model.CategoryName</p>
