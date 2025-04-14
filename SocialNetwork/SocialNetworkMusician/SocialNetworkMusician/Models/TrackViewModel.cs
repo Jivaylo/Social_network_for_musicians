@@ -15,7 +15,9 @@ namespace SocialNetworkMusician.Models
         public string? Description { get; set; }
         [Display(Name = "Music File")]
         public IFormFile? MusicFile { get; set; }
-
+        public string? ImageUrl { get; set; } 
+        [BindNever]
+        public IFormFile? TrackImage { get; set; }
 
         [Display(Name = "Music File URL")]
         [Url(ErrorMessage = "Please enter a valid URL.")]

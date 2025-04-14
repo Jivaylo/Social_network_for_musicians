@@ -111,43 +111,38 @@ namespace SocialNetworkMusician.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Create(TrackViewModel model, IFormFile? MusicFile)
+        public async Task<IActionResult> Create(TrackViewModel model, IFormFile MusicFile, IFormFile TrackImage)
         {
-            if (string.IsNullOrWhiteSpace(model.FileUrl) || !(model.FileUrl.EndsWith(".mp3") || model.FileUrl.EndsWith(".wav") || model.FileUrl.Contains("youtube.com") || model.FileUrl.Contains("youtu.be")))
-            {
-                ModelState.AddModelError("FileUrl", "Please enter a valid YouTube, .mp3, or .wav URL.");
-            }
-            if (string.IsNullOrWhiteSpace(model.FileUrl) && MusicFile == null)
-            {
-                ModelState.AddModelError("", "You must provide either a music file or a URL.");
-            }
-
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || MusicFile == null)
             {
                 ViewBag.Categories = new SelectList(_context.TrackCategories, "Id", "Name");
+                ModelState.AddModelError("", "Music file is required.");
                 return View(model);
             }
 
-            string fileUrl;
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+            Directory.CreateDirectory(uploadsFolder);
 
-            if (MusicFile != null)
+            var uniqueFileName = Guid.NewGuid() + Path.GetExtension(MusicFile.FileName);
+            var musicPath = Path.Combine(uploadsFolder, uniqueFileName);
+
+            using (var stream = new FileStream(musicPath, FileMode.Create))
             {
-                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
-                Directory.CreateDirectory(uploadsFolder);
+                await MusicFile.CopyToAsync(stream);
+            }
 
-                var uniqueFileName = Guid.NewGuid() + Path.GetExtension(MusicFile.FileName);
-                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+            string? imageUrl = null;
+            if (TrackImage != null)
+            {
+                var imageFileName = Guid.NewGuid() + Path.GetExtension(TrackImage.FileName);
+                var imagePath = Path.Combine(uploadsFolder, imageFileName);
 
-                using (var stream = new FileStream(filePath, FileMode.Create))
+                using (var stream = new FileStream(imagePath, FileMode.Create))
                 {
-                    await MusicFile.CopyToAsync(stream);
+                    await TrackImage.CopyToAsync(stream);
                 }
 
-                fileUrl = "/uploads/" + uniqueFileName;
-            }
-            else
-            {
-                fileUrl = model.FileUrl!;
+                imageUrl = "/uploads/" + imageFileName;
             }
 
             var user = await _userManager.GetUserAsync(User);
@@ -157,10 +152,11 @@ namespace SocialNetworkMusician.Controllers
                 Id = Guid.NewGuid(),
                 Title = model.Title,
                 Description = model.Description,
-                FileUrl = fileUrl,
+                FileUrl = "/uploads/" + uniqueFileName,
                 CategoryId = model.CategoryId,
                 UploadedAt = DateTime.UtcNow,
-                UserId = user.Id
+                UserId = user.Id,
+                ImageUrl = imageUrl
             };
 
             _context.MusicTracks.Add(track);
@@ -168,7 +164,6 @@ namespace SocialNetworkMusician.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-
 
         [Authorize]
         [HttpPost]
@@ -319,6 +314,72 @@ namespace SocialNetworkMusician.Controllers
 
             return View(tracks);
         }
+        [Authorize]
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            var track = await _context.MusicTracks.FindAsync(id);
+            var user = await _userManager.GetUserAsync(User);
+
+            if (track == null) return NotFound();
+
+            if (track.UserId != user.Id && !User.IsInRole("Admin"))
+                return Forbid();
+
+            ViewBag.Categories = new SelectList(_context.TrackCategories, "Id", "Name", track.CategoryId);
+
+            var model = new TrackViewModel
+            {
+                Id = track.Id,
+                Title = track.Title,
+                Description = track.Description,
+                CategoryId = track.CategoryId,
+                FileUrl = track.FileUrl,
+                ImageUrl = track.ImageUrl
+            };
+
+            return View(model);
+        }
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Edit(Guid id, TrackViewModel model, IFormFile? TrackImage)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Categories = new SelectList(_context.TrackCategories, "Id", "Name", model.CategoryId);
+                return View(model);
+            }
+
+            var track = await _context.MusicTracks.FindAsync(id);
+            var user = await _userManager.GetUserAsync(User);
+
+            if (track == null) return NotFound();
+            if (track.UserId != user.Id && !User.IsInRole("Admin")) return Forbid();
+
+            track.Title = model.Title;
+            track.Description = model.Description;
+            track.CategoryId = model.CategoryId;
+
+          
+            if (TrackImage != null)
+            {
+                var uploads = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/images");
+                Directory.CreateDirectory(uploads);
+
+                var fileName = Guid.NewGuid() + Path.GetExtension(TrackImage.FileName);
+                var filePath = Path.Combine(uploads, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await TrackImage.CopyToAsync(stream);
+                }
+
+                track.ImageUrl = "/uploads/images/" + fileName;
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Details", new { id = track.Id });
+        }
+
 
     }
 }

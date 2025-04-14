@@ -1,0 +1,53 @@
+﻿@model TrackViewModel
+@{
+    ViewData["Title"] = "Edit Track";
+}
+
+<div class="container mt-5 mb-5 px-4" style="max-width: 800px;">
+    <h2 class="text-white mb-4 text-center">✏️ Edit Track</h2>
+
+    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="form-group mb-3">
+            <label asp-for="Title"></label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Description"></label>
+            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="CategoryId">Category</label>
+            <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.Categories">
+                <option value="">-- Select Category --</option>
+            </select>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <div class="mb-3">
+                <img src="@Model.ImageUrl" alt="Track Image" class="img-fluid rounded shadow" style="max-height: 200px;" />
+            </div>
+        }
+
+        <div class="form-group mb-4">
+            <label class="form-label text-white">🎨 Change Track Image (optional)</label>
+            <input type="file" name="TrackImage" class="form-control" accept="image/*" />
+        </div>
+
+        <div class="d-flex justify-content-between gap-2">
+            <button type="submit" class="btn btn-success px-4">Save Changes</button>
+            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary px-4">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+}

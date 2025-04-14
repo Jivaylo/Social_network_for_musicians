@@ -3,7 +3,10 @@
 
 <div class="container d-flex justify-content-center">
     <div class="card bg-dark text-white shadow-lg p-4" style="width: 100%; max-width: 700px; border-radius: 15px;">
-
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <img src="@Model.ImageUrl" alt="Track Image" class="img-fluid mb-4 rounded shadow" style="max-height: 300px;" />
+        }
         <h2 class="text-center mb-4">🎵 @Model.Title</h2>
 
         @if (Model.FileUrl.Contains("youtube.com") || Model.FileUrl.Contains("youtu.be"))
@@ -58,6 +61,13 @@
                     👎 Dislike (@Model.DislikeCount)
                 </button>
             </form>
+            @if (User.Identity?.IsAuthenticated == true &&
+            (User.Identity.Name == Model.UserName || User.IsInRole("Admin")))
+            {
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-warning">
+                    ✏️ Edit Track
+                </a>
+            }
 
             <form asp-controller="Reports" asp-action="Create" method="get">
                 <input type="hidden" name="trackId" value="@Model.Id" />

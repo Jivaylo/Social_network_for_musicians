@@ -26,6 +26,8 @@ namespace SocialNetworkMusician.Data.Data
 
         [DataType(DataType.DateTime)]
         public DateTime UploadedAt { get; set; } = DateTime.UtcNow;
+        public string? ImageUrl { get; set; }
+
 
         [Required]
         public string UserId { get; set; } = null!;
