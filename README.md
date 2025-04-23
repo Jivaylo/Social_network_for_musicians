@@ -1,40 +1,114 @@
-Soundify 🎵
 
-A SoundCloud-inspired MVC application for streaming and sharing music.
+# 🎧 SoundSocial – Social Network for Musicians
 
-Introduction
-Soundify is a web-based music-sharing platform that allows users to upload, stream, and share audio files. Built using the MVC (Model-View-Controller) architecture, this app demonstrates a modular and scalable approach to web application development.
+SoundSocial is a feature-rich ASP.NET Core MVC web application that connects musicians and music lovers. Users can upload and share tracks, create playlists, follow artists, send private messages, and explore trending music. It's like a mini Spotify meets SoundCloud, built from scratch!
 
-Features
-User Authentication: Sign up, log in, and manage profiles.
-Upload Music: Users can upload and manage their tracks.
-Stream Audio: Real-time audio streaming with a clean and intuitive player.
-Playlists: Create and manage playlists.
-Search: Search for songs, artists, or playlists.
-Responsive Design: Fully responsive and works across devices.
+---
 
-Technologies Used
+## 🚀 Features
 
-Backend:
-*******
-Frontend:
-*******
-Other Tools:
-*******
+- ✅ **Authentication**: Secure registration & login system with custom profile management
+- 🎵 **Upload Music**: Supports MP3/WAV files and YouTube video links with dynamic preview
+- 🎨 **Track Images**: Add custom images to your tracks for better visuals
+- 🔁 **Play Count**: Tracks total plays, even for YouTube embeds
+- ❤️ **Like/Dislike System**: Interactive feedback on each track
+- 📥 **Playlists**: Create, manage and organize custom playlists
+- 💬 **Comments**: Social interaction on every track
+- 🔔 **Direct Messages**: Secure user-to-user messaging
+- 🔍 **User Search**: Find and follow other artists
+- 👤 **Public Profiles**: View uploaded tracks, followers and bios
+- 📊 **Admin Dashboard**: Promote users, ban accounts, view total stats
+- 🚨 **Report System**: Users can report tracks or users for moderation
 
-Steps
-Clone the repository:
-git clone https://github.com/your-username/soundify.git  
-cd soundify 
+---
 
-Usage
-Sign Up: Create an account.
-Upload Music: Use the dashboard to upload your tracks.
-Stream Music: Browse the library or use the search bar to discover tracks.
-Create Playlists: Organize your favorite tracks into playlists.
+## 📷 Screenshots
 
-License
-This project is licensed under the MIT License.
+> Add some UI screenshots here showing:
+- Track page with YouTube embed
+- Playlists
+- Admin dashboard
+- Messaging panel
 
-Acknowledgements
-Inspired by SoundCloud.
+---
+
+## 🛠️ Tech Stack
+
+- **Backend**: ASP.NET Core MVC
+- **Frontend**: Razor Views + Bootstrap 5
+- **Database**: Entity Framework Core with SQL Server
+- **Auth**: ASP.NET Identity
+- **Other**: YouTube IFrame API, File Uploads, Custom Validation, Partial Views
+
+---
+
+## 📂 Folder Structure
+
+```
+/Controllers
+/Views
+    /Tracks
+    /Users
+    /Playlists
+    /Messages
+    /Reports
+/Models
+/Data
+    /ApplicationDbContext.cs
+wwwroot/
+```
+
+---
+
+## 📦 Setup Instructions
+
+1. Clone this repo:
+```bash
+git clone https://github.com/yourusername/soundsocial.git
+```
+
+2. Open in **Visual Studio 2022+**
+
+3. Update `appsettings.json` with your connection string
+
+4. Run migrations:
+```bash
+dotnet ef database update
+```
+
+5. Run the project:
+```bash
+dotnet run
+```
+
+---
+
+## 🔐 Default Admin Login (Optional)
+
+If seeded:
+
+```txt
+📧 Email: admin@music.com  
+🔑 Password: Admin123!
+```
+
+---
+
+## ✅ Todo & Improvements
+
+- [ ] Add real email sender (SendGrid, MailKit)
+- [ ] Dark mode toggle 🎨
+- [ ] Mobile responsive playlist UI
+- [ ] Upload thumbnails for YouTube tracks
+
+---
+
+## 🤝 Contributions
+
+Pull requests and forks are welcome! Let’s grow the musician network together 🎶
+
+---
+
+## 📄 License
+
+MIT License © [Ivaylo Ivanov]
