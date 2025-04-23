@@ -1,0 +1,15 @@
+﻿@model ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<div class="text-center text-white mt-5">
+    <h1 class="display-4">😢 Oops! Something went wrong.</h1>
+    <p class="lead">Please try again later or go back home.</p>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-light mt-3">⬅ Back to Home</a>
+
+    @if (Model?.RequestId != null)
+    {
+        <p class="text-muted mt-2">Request ID: <code>@Model.RequestId</code></p>
+    }
+</div>

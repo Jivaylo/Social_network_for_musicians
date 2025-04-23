@@ -32,10 +32,14 @@ namespace SocialNetworkMusician
             });
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
-
+           
             var app = builder.Build();
-
-           // await app.SeedAsync();
+            if (!app.Environment.IsDevelopment())
+            {
+                app.UseExceptionHandler("/Error/ErrorPage");
+                app.UseStatusCodePagesWithReExecute("/Error/ErrorPage");
+            }
+            // await app.SeedAsync();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -48,6 +52,7 @@ namespace SocialNetworkMusician
             app.MapControllerRoute(
                  name: "default",
                  pattern: "{controller=Home}/{action=Index}/{id?}");
+            app.MapFallbackToController("ErrorPage", "Error");
             app.MapRazorPages();
 
             app.Run();
