@@ -263,10 +263,13 @@ namespace SocialNetworkMusician.Controllers
             if (track == null)
                 return NotFound();
 
+          
+            var filtered = Utilities.BadWordsFilter.CleanComment(newComment);
+
             var comment = new Comment
             {
                 Id = Guid.NewGuid(),
-                Content = newComment,
+                Content = filtered,
                 CreatedAt = DateTime.UtcNow,
                 UserId = user.Id,
                 MusicTrackId = id
@@ -277,6 +280,7 @@ namespace SocialNetworkMusician.Controllers
 
             return RedirectToAction(nameof(Details), new { id });
         }
+
         [HttpPost]
         public async Task<IActionResult> IncrementPlayCount(Guid id)
         {
