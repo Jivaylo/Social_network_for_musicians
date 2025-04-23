@@ -4,7 +4,11 @@
     ViewData["Title"] = "Locked out";
 }
 
-<header>
-    <h1 class="text-danger">@ViewData["Title"]</h1>
-    <p class="text-danger">This account has been locked out, please try again later.</p>
-</header>
+<div class="text-center text-danger">
+    <h1 class="display-4">🚫 You’ve Been Banned</h1>
+    <p class="lead">Your account has been locked by the admin and you can no longer log in.</p>
+    <p>If you believe this is a mistake, please contact support or the site administrator.</p>
+    <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-outline-light btn-sm mt-3 px-4">
+        ⬅ Back to Home
+    </a>
+</div>
