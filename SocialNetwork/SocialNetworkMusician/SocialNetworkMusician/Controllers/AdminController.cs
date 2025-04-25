@@ -24,11 +24,10 @@ namespace SocialNetworkMusician.Controllers
             _emailSender = emailSender;
         }
 
-        public async Task<IActionResult> Index(string sortBy = "email")
+        public async Task<IActionResult> Index(string sortBy = "display", string direction = "asc")
         {
             var users = await _userManager.Users.ToListAsync();
             var tracks = await _context.MusicTracks.ToListAsync();
-
             var viewModels = new List<AdminUserViewModel>();
 
             foreach (var user in users)
@@ -42,19 +41,22 @@ namespace SocialNetworkMusician.Controllers
                     DisplayName = user.DisplayName,
                     IsAdmin = isAdmin,
                     IsBanned = user.LockoutEnd != null && user.LockoutEnd > DateTime.UtcNow,
-                    JoinedDate = user.JoinedDate 
+                    JoinedDate = user.JoinedDate
                 });
             }
 
-            
-            viewModels = sortBy switch
+            viewModels = (sortBy, direction) switch
             {
-                "role" => viewModels.OrderByDescending(u => u.IsAdmin).ToList(),
-                "joined" => viewModels.OrderByDescending(u => u.JoinedDate).ToList(),
-                _ => viewModels.OrderBy(u => u.Email).ToList()
+                ("email", "asc") => viewModels.OrderBy(u => u.Email).ToList(),
+                ("email", "desc") => viewModels.OrderByDescending(u => u.Email).ToList(),
+                ("display", "asc") => viewModels.OrderBy(u => u.DisplayName).ToList(),
+                ("display", "desc") => viewModels.OrderByDescending(u => u.DisplayName).ToList(),
+                ("role", _) => viewModels.OrderByDescending(u => u.IsAdmin).ToList(),
+                _ => viewModels
             };
 
             ViewBag.SortBy = sortBy;
+            ViewBag.Direction = direction;
             ViewBag.TrackCount = tracks.Count;
             ViewBag.UserCount = users.Count;
             ViewBag.TotalPlays = tracks.Sum(t => t.PlayCount);
