@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<TrackViewModel>
+
 <h2 class="text-white mb-4">🔥 Trending Tracks</h2>
 
 @foreach (var track in Model)
@@ -6,17 +7,33 @@
     var total = track.LikeCount + track.DislikeCount;
     var likePercent = total > 0 ? (int)((double)track.LikeCount / total * 100) : 0;
 
-    <div class="card bg-dark text-white mb-4 p-3 shadow">
-        <h5>@track.Title by @track.UserName</h5>
-        <p>@track.Description</p>
-        <p><strong>Likes:</strong> 👍 @track.LikeCount | 👎 @track.DislikeCount | 🔁 Plays: @track.PlayCount</p>
+    <div class="card bg-dark text-white mb-4 shadow-sm border border-secondary">
+        <div class="row g-0">
+            @if (!string.IsNullOrEmpty(track.ImageUrl))
+            {
+                <div class="col-md-3 d-flex align-items-center">
+                    <img src="@track.ImageUrl" class="img-fluid rounded-start" style="object-fit: cover; width: 100%; height: 100%;" alt="Track image" />
+                </div>
+            }
+            <div class="col-md-9">
+                <div class="card-body">
+                    <h5 class="card-title text-info">@track.Title</h5>
+                    <p class="card-text mb-1"><small>By <strong>@track.UserName</strong> • @track.CategoryName</small></p>
+                    <p class="card-text text-muted">@track.Description</p>
 
-        <div class="progress" style="height: 12px;">
-            <div class="progress-bar bg-success" role="progressbar" style="width: @likePercent%;" aria-valuenow="@likePercent" aria-valuemin="0" aria-valuemax="100"></div>
-            <div class="progress-bar bg-danger" role="progressbar" style="width: @(100 - likePercent)%;" aria-valuenow="@(100 - likePercent)" aria-valuemin="0" aria-valuemax="100"></div>
+                    <p class="mb-1">
+                        👍 @track.LikeCount | 👎 @track.DislikeCount | 🔁 @track.PlayCount plays
+                        <span class="badge bg-primary ms-2">🔥 Score: @track.Score</span>
+                    </p>
+
+                    <div class="progress mb-2" style="height: 10px;">
+                        <div class="progress-bar bg-success" style="width:@likePercent%;" role="progressbar" aria-valuenow="@likePercent" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar bg-danger" style="width:@(100 - likePercent)%;" role="progressbar"></div>
+                    </div>
+
+                    <a asp-action="Details" asp-route-id="@track.Id" class="btn btn-sm btn-outline-info">🎧 Listen</a>
+                </div>
+            </div>
         </div>
-
-        <a asp-action="Details" asp-route-id="@track.Id" class="btn btn-sm btn-outline-info mt-2">🎧 Listen</a>
     </div>
 }
-

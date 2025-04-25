@@ -300,24 +300,28 @@ namespace SocialNetworkMusician.Controllers
                 .Include(t => t.Dislikes)
                 .Include(t => t.Category)
                 .Include(t => t.User)
-                .OrderByDescending(t => t.Likes.Count) 
-                .Take(10)
+                .ToListAsync();
+
+            var rankedTracks = tracks
                 .Select(t => new TrackViewModel
                 {
                     Id = t.Id,
                     Title = t.Title,
                     Description = t.Description,
                     FileUrl = t.FileUrl,
-                    CategoryName = t.Category.Name,
-                    UserName = t.User.DisplayName,
+                    CategoryName = t.Category?.Name,
+                    UserName = t.User?.DisplayName,
                     LikeCount = t.Likes.Count,
                     DislikeCount = t.Dislikes.Count,
+                    PlayCount = t.PlayCount,
                     UploadedAt = t.UploadedAt,
-                    PlayCount = t.PlayCount
+                    ImageUrl = t.ImageUrl,
+                    Score = t.Likes.Count + (t.PlayCount * 0.5)
                 })
-                .ToListAsync();
+                .OrderByDescending(t => t.Score)
+                .ToList();
 
-            return View(tracks);
+            return View(rankedTracks);
         }
         [Authorize]
         public async Task<IActionResult> Edit(Guid id)

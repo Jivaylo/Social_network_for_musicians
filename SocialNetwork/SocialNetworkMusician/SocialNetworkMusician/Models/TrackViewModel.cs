@@ -28,6 +28,7 @@ namespace SocialNetworkMusician.Models
 
         public string? CategoryName { get; set; }
         public int PlayCount { get; set; }
+        public double Score { get; set; }
 
         public DateTime UploadedAt { get; set; }
 
