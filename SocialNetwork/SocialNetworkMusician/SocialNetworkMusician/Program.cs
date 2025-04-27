@@ -39,6 +39,7 @@ namespace SocialNetworkMusician
             builder.Services.AddScoped<MessagesService>();
             builder.Services.AddScoped<IPlaylistsService, PlaylistsService>();
             builder.Services.AddScoped<IReportsService, ReportsService>();
+            builder.Services.AddScoped<ITracksService, TracksService>();
 
             builder.Services.AddRazorPages();
            
