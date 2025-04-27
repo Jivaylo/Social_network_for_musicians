@@ -1,6 +1,7 @@
 ﻿@model UserProfileViewModel
 
 <h2 class="text-white">@Model.DisplayName's Profile</h2>
+
 @if (User.Identity?.IsAuthenticated == true && User.Identity.Name == Model.Email)
 {
     <a asp-action="EditProfile" asp-controller="Users" class="btn btn-outline-warning float-end mb-3">
@@ -15,8 +16,7 @@
                 <strong>Email:</strong> @Model.Email
             </li>
             <li class="list-group-item">
-                <strong>Joined:</strong>
-                @(Model.JoinedDate?.ToShortDateString() ?? "N/A")
+                <strong>Joined:</strong> @(Model.JoinedDate?.ToShortDateString() ?? "N/A")
             </li>
             <li class="list-group-item">
                 <strong>Tracks Uploaded:</strong> @Model.TrackCount
@@ -51,7 +51,7 @@
             </div>
         }
     </div>
-
+</div>
 
 <h4 class="text-white mt-5">🎵 Tracks</h4>
 @if (Model.Tracks.Any())
@@ -60,11 +60,7 @@
         @foreach (var track in Model.Tracks)
         {
             <li class="list-group-item bg-dark text-light">
-                <strong>@track.Title</strong> - @track.CategoryName
-                <br />
-                <audio controls class="w-100 mt-2">
-                    <source src="@track.FileUrl" type="audio/mpeg" />
-                </audio>
+                <strong>@track.Title</strong>
             </li>
         }
     </ul>
@@ -94,4 +90,3 @@ else
 }
 
 <a asp-action="Index" class="btn btn-outline-light mt-4">⬅ Back to Users</a>
-

@@ -19,14 +19,11 @@ namespace SocialNetworkMusician.Controllers
             _context = context;
         }
 
-        
+
         [AllowAnonymous]
         public async Task<IActionResult> Profile(string id)
         {
-            var user = await _userManager.Users
-                .Include(u => u.MusicTracks)
-                .Include(u => u.Playlists)
-                .FirstOrDefaultAsync(u => u.Id == id);
+            var user = await _userManager.FindByIdAsync(id);
 
             if (user == null) return NotFound();
 
@@ -42,6 +39,16 @@ namespace SocialNetworkMusician.Controllers
             var followersCount = await _context.Follows.CountAsync(f => f.FollowedId == user.Id);
             var followingCount = await _context.Follows.CountAsync(f => f.FollowerId == user.Id);
 
+            // ✅ Here we query the tracks directly!
+            var userTracks = await _context.MusicTracks
+                .Include(t => t.Category)
+                .Where(t => t.UserId == user.Id)
+                .ToListAsync();
+
+            var playlists = await _context.Playlists
+                .Where(p => p.UserId == user.Id)
+                .ToListAsync();
+
             var vm = new UserProfileViewModel
             {
                 Id = user.Id,
@@ -51,8 +58,8 @@ namespace SocialNetworkMusician.Controllers
                 IsFollowing = isFollowing,
                 FollowersCount = followersCount,
                 FollowingCount = followingCount,
-                TrackCount = user.MusicTracks.Count, 
-                Tracks = user.MusicTracks.Select(t => new TrackViewModel
+
+                Tracks = userTracks.Select(t => new TrackViewModel
                 {
                     Id = t.Id,
                     Title = t.Title,
@@ -61,7 +68,8 @@ namespace SocialNetworkMusician.Controllers
                     UploadedAt = t.UploadedAt,
                     CategoryName = t.Category?.Name
                 }).ToList(),
-                Playlists = user.Playlists.Select(p => new PlaylistViewModel
+
+                Playlists = playlists.Select(p => new PlaylistViewModel
                 {
                     Id = p.Id,
                     Name = p.Name
