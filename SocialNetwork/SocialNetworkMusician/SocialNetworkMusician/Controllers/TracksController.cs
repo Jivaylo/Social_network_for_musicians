@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SocialNetworkMusician.Data;
 using SocialNetworkMusician.Data.Data;
 using SocialNetworkMusician.Models;
 using SocialNetworkMusician.Services.Interfaces;
@@ -14,11 +15,13 @@ namespace SocialNetworkMusician.Controllers
     {
         private readonly ITracksService _tracksService;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ApplicationDbContext _context; // Needed to load Categories!
 
-        public TracksController(ITracksService tracksService, UserManager<ApplicationUser> userManager)
+        public TracksController(ITracksService tracksService, UserManager<ApplicationUser> userManager, ApplicationDbContext context)
         {
             _tracksService = tracksService;
             _userManager = userManager;
+            _context = context;
         }
 
         public async Task<IActionResult> Index()
@@ -34,13 +37,14 @@ namespace SocialNetworkMusician.Controllers
 
             if (model == null) return NotFound();
 
-            ViewBag.UserPlaylists = user != null ? (await _userManager.Users.Include(u => u.Playlists).FirstOrDefaultAsync(u => u.Id == user.Id))?.Playlists : new List<Playlist>();
+            ViewBag.UserPlaylists = user != null ? (await _userManager.Users.Include(u => u.Playlists).FirstOrDefaultAsync(u => u.Id == user.Id))?.Playlists ?? new List<Playlist>() : new List<Playlist>();
             return View(model);
         }
 
         [Authorize]
         public IActionResult Create()
         {
+            ViewBag.Categories = new SelectList(_context.TrackCategories.ToList(), "Id", "Name");
             return View();
         }
 
@@ -50,14 +54,17 @@ namespace SocialNetworkMusician.Controllers
         {
             if (!ModelState.IsValid || (model.MusicFile == null && string.IsNullOrWhiteSpace(model.FileUrl)))
             {
+                ViewBag.Categories = new SelectList(_context.TrackCategories.ToList(), "Id", "Name");
                 ModelState.AddModelError("", "Please upload a music file or provide a music link.");
                 return View(model);
             }
 
             var user = await _userManager.GetUserAsync(User);
             await _tracksService.CreateTrackAsync(model, user.Id);
+
             return RedirectToAction(nameof(Index));
         }
+
 
         [Authorize]
         [HttpPost]
@@ -95,14 +102,22 @@ namespace SocialNetworkMusician.Controllers
 
             var user = await _userManager.GetUserAsync(User);
             await _tracksService.AddCommentAsync(id, newComment, user.Id);
+
             return RedirectToAction(nameof(Details), new { id });
         }
 
         [HttpPost]
         public async Task<IActionResult> IncrementPlayCount(Guid id)
         {
-            await _tracksService.IncrementPlayCountAsync(id);
-            return Ok();
+            try
+            {
+                await _tracksService.IncrementPlayCountAsync(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
         [AllowAnonymous]
@@ -121,14 +136,19 @@ namespace SocialNetworkMusician.Controllers
             if (track == null) return NotFound();
             if (track.UserName != user.UserName && !User.IsInRole("Admin")) return Forbid();
 
+            ViewBag.Categories = new SelectList(_context.TrackCategories.ToList(), "Id", "Name", track.CategoryId);
             return View(track);
         }
 
-        [Authorize]
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Edit(Guid id, TrackViewModel model)
         {
-            if (!ModelState.IsValid) return View(model);
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Categories = new SelectList(_context.TrackCategories.ToList(), "Id", "Name", model.CategoryId);
+                return View(model);
+            }
 
             var user = await _userManager.GetUserAsync(User);
             await _tracksService.EditTrackAsync(id, model, user.Id, User.IsInRole("Admin"));

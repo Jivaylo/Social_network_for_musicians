@@ -29,13 +29,24 @@ namespace SocialNetworkMusician.Controllers
 
         public async Task<IActionResult> Details(Guid id, string? search)
         {
-            var model = await _playlistsService.GetPlaylistDetailsAsync(id, search);
+            var (model, availableTracks) = await _playlistsService.GetPlaylistDetailsAsync(id, search);
+
             if (model == null) return NotFound();
 
+            ViewBag.AvailableTracks = availableTracks;
             ViewBag.Search = search;
+
             return View(model);
         }
 
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            await _playlistsService.DeletePlaylistAsync(id, user.Id);
+            return RedirectToAction(nameof(Index));
+        }
         public IActionResult Create() => View();
 
         [HttpPost]

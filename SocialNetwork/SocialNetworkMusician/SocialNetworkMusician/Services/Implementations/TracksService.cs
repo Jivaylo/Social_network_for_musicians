@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using SocialNetworkMusician.Data.Data;
+using Microsoft.EntityFrameworkCore;
 using SocialNetworkMusician.Data;
+using SocialNetworkMusician.Data.Data;
 using SocialNetworkMusician.Models;
 using SocialNetworkMusician.Services.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace SocialNetworkMusician.Services.Implementations
 {
@@ -49,12 +49,10 @@ namespace SocialNetworkMusician.Services.Implementations
                 .Include(t => t.Category)
                 .Include(t => t.Likes)
                 .Include(t => t.Dislikes)
-                .Include(t => t.Comments)
-                .ThenInclude(c => c.User)
+                .Include(t => t.Comments).ThenInclude(c => c.User)
                 .FirstOrDefaultAsync(t => t.Id == id);
 
-            if (track == null)
-                return null;
+            if (track == null) return null;
 
             return new TrackViewModel
             {
@@ -62,6 +60,7 @@ namespace SocialNetworkMusician.Services.Implementations
                 Title = track.Title,
                 Description = track.Description,
                 FileUrl = track.FileUrl,
+                CategoryId = track.CategoryId,
                 CategoryName = track.Category?.Name,
                 UploadedAt = track.UploadedAt,
                 UserName = track.User?.UserName,
@@ -88,9 +87,9 @@ namespace SocialNetworkMusician.Services.Implementations
             if (model.MusicFile != null)
             {
                 var uniqueFileName = Guid.NewGuid() + Path.GetExtension(model.MusicFile.FileName);
-                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                var musicPath = Path.Combine(uploadsFolder, uniqueFileName);
 
-                using (var stream = new FileStream(filePath, FileMode.Create))
+                using (var stream = new FileStream(musicPath, FileMode.Create))
                 {
                     await model.MusicFile.CopyToAsync(stream);
                 }
@@ -104,14 +103,17 @@ namespace SocialNetworkMusician.Services.Implementations
             string? imageUrl = null;
             if (model.TrackImage != null)
             {
+                var imagesFolder = Path.Combine(uploadsFolder, "images");
+                Directory.CreateDirectory(imagesFolder);
+
                 var imageFileName = Guid.NewGuid() + Path.GetExtension(model.TrackImage.FileName);
-                var imagePath = Path.Combine(uploadsFolder, imageFileName);
+                var imagePath = Path.Combine(imagesFolder, imageFileName);
 
                 using (var stream = new FileStream(imagePath, FileMode.Create))
                 {
                     await model.TrackImage.CopyToAsync(stream);
                 }
-                imageUrl = "/uploads/" + imageFileName;
+                imageUrl = "/uploads/images/" + imageFileName;
             }
 
             var track = new MusicTrack
@@ -123,7 +125,7 @@ namespace SocialNetworkMusician.Services.Implementations
                 CategoryId = model.CategoryId,
                 UploadedAt = DateTime.UtcNow,
                 UserId = userId,
-                ImageUrl = imageUrl
+                ImageUrl = imageUrl 
             };
 
             _context.MusicTracks.Add(track);
@@ -132,11 +134,30 @@ namespace SocialNetworkMusician.Services.Implementations
 
         public async Task DeleteTrackAsync(Guid id, string userId, bool isAdmin)
         {
-            var track = await _context.MusicTracks.FindAsync(id);
-            if (track == null) return;
+            var track = await _context.MusicTracks
+                .Include(t => t.Likes)
+                .Include(t => t.Dislikes)
+                .Include(t => t.Comments)
+                .Include(t => t.PlaylistTracks)
+                .FirstOrDefaultAsync(t => t.Id == id);
+
+            if (track == null)
+                throw new Exception("Track not found.");
 
             if (track.UserId != userId && !isAdmin)
                 throw new UnauthorizedAccessException();
+
+            if (track.PlaylistTracks.Any())
+                _context.PlaylistTracks.RemoveRange(track.PlaylistTracks);
+
+            if (track.Likes.Any())
+                _context.Likes.RemoveRange(track.Likes);
+
+            if (track.Dislikes.Any())
+                _context.Dislikes.RemoveRange(track.Dislikes);
+
+            if (track.Comments.Any())
+                _context.Comments.RemoveRange(track.Comments);
 
             _context.MusicTracks.Remove(track);
             await _context.SaveChangesAsync();
@@ -154,9 +175,7 @@ namespace SocialNetworkMusician.Services.Implementations
                 _context.Likes.Remove(like);
             else
             {
-                if (dislike != null)
-                    _context.Dislikes.Remove(dislike);
-
+                if (dislike != null) _context.Dislikes.Remove(dislike);
                 _context.Likes.Add(new Like { Id = Guid.NewGuid(), UserId = userId, MusicTrackId = id });
             }
 
@@ -175,9 +194,7 @@ namespace SocialNetworkMusician.Services.Implementations
                 _context.Dislikes.Remove(dislike);
             else
             {
-                if (like != null)
-                    _context.Likes.Remove(like);
-
+                if (like != null) _context.Likes.Remove(like);
                 _context.Dislikes.Add(new Dislike { Id = Guid.NewGuid(), UserId = userId, MusicTrackId = id });
             }
 
@@ -186,9 +203,6 @@ namespace SocialNetworkMusician.Services.Implementations
 
         public async Task AddCommentAsync(Guid id, string comment, string userId)
         {
-            var track = await _context.MusicTracks.FindAsync(id);
-            if (track == null) return;
-
             var cleanComment = Utilities.BadWordsFilter.CleanComment(comment);
 
             _context.Comments.Add(new Comment
@@ -206,10 +220,13 @@ namespace SocialNetworkMusician.Services.Implementations
         public async Task IncrementPlayCountAsync(Guid id)
         {
             var track = await _context.MusicTracks.FindAsync(id);
-            if (track == null) return;
+            if (track == null) throw new Exception("Track not found.");
 
-            track.PlayCount++;
-            await _context.SaveChangesAsync();
+            if (track.PlayCount < 300)
+            {
+                track.PlayCount++;
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task<List<TrackViewModel>> GetTrendingTracksAsync()
@@ -235,9 +252,7 @@ namespace SocialNetworkMusician.Services.Implementations
                 UploadedAt = t.UploadedAt,
                 ImageUrl = t.ImageUrl,
                 Score = t.Likes.Count + (t.PlayCount * 0.5)
-            })
-            .OrderByDescending(t => t.Score)
-            .ToList();
+            }).OrderByDescending(t => t.Score).ToList();
         }
 
         public async Task EditTrackAsync(Guid id, TrackViewModel model, string userId, bool isAdmin)
@@ -263,7 +278,7 @@ namespace SocialNetworkMusician.Services.Implementations
                     await model.TrackImage.CopyToAsync(stream);
                 }
 
-                track.ImageUrl = "/uploads/images/" + fileName;
+                track.ImageUrl = "/uploads/images/" + fileName; 
             }
 
             await _context.SaveChangesAsync();

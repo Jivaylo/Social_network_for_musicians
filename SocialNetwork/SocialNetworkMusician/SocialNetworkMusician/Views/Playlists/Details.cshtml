@@ -1,5 +1,6 @@
 ﻿@model PlaylistViewModel
 @using SocialNetworkMusician.Data.Data
+
 @{
     ViewData["Title"] = $"Playlist - {Model.Name}";
 }
@@ -16,28 +17,36 @@
     </div>
 </form>
 
-@if (ViewBag.AvailableTracks is List<MusicTrack> results && results.Any())
+@if (!string.IsNullOrWhiteSpace(ViewBag.Search))
 {
-    <ul class="list-group mb-4">
-        @foreach (var track in results)
-        {
-            <li class="list-group-item bg-dark text-light d-flex justify-content-between align-items-center">
-                <span>🎶 <strong>@track.Title</strong> - @track.Description</span>
-                <form asp-action="AddTrack" method="post" class="m-0">
-                    <input type="hidden" name="trackId" value="@track.Id" />
-                    <input type="hidden" name="playlistId" value="@Model.Id" />
-                    <button class="btn btn-sm btn-outline-light">➕ Add</button>
-                </form>
-            </li>
-        }
-    </ul>
+    if (ViewBag.AvailableTracks is List<MusicTrack> results && results.Any())
+    {
+        <ul class="list-group mb-4">
+            @foreach (var track in results)
+            {
+                <li class="list-group-item bg-dark text-light d-flex justify-content-between align-items-center">
+                    <span>🎶 <strong>@track.Title</strong> - @track.Description</span>
+                    <form asp-action="AddTrack" method="post" class="m-0">
+                        <input type="hidden" name="trackId" value="@track.Id" />
+                        <input type="hidden" name="playlistId" value="@Model.Id" />
+                        <button class="btn btn-sm btn-outline-light">➕ Add</button>
+                    </form>
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p class="text-warning">⚠️ No tracks found for "@ViewBag.Search"</p>
+    }
 }
-else if (!string.IsNullOrEmpty(ViewBag.Search))
+else
 {
-    <p class="text-warning">No tracks found matching "@ViewBag.Search"</p>
+    <p class="text-muted">🔍 Start typing to search for tracks...</p>
 }
 
 <hr class="text-white" />
+
 
 <h4 class="text-white">Tracks in Playlist</h4>
 @if (!Model.Tracks.Any())
@@ -56,14 +65,12 @@ else
                 <div class="d-flex gap-2 align-items-center">
                     @if (track.FileUrl.Contains("youtube.com") || track.FileUrl.Contains("youtu.be"))
                     {
-                      
                         <a asp-controller="Tracks" asp-action="Details" asp-route-id="@track.Id" class="btn btn-sm btn-outline-info">
                             ▶️ View
                         </a>
                     }
                     else
                     {
-                       
                         <audio controls style="height: 30px; max-width: 200px;">
                             <source src="@track.FileUrl" type="audio/mpeg" />
                         </audio>

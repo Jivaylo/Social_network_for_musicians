@@ -15,26 +15,27 @@ namespace SocialNetworkMusician.Services.Implementations
             _context = context;
         }
 
-        public async Task<PlaylistViewModel?> GetPlaylistDetailsAsync(Guid id, string? search)
+        public async Task<(PlaylistViewModel?, List<MusicTrack>)> GetPlaylistDetailsAsync(Guid id, string? search)
         {
             var playlist = await _context.Playlists
                 .Include(p => p.PlaylistTracks)
                     .ThenInclude(pt => pt.MusicTrack)
-                    .ThenInclude(mt => mt.Category)
+                        .ThenInclude(mt => mt.Category)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
-            if (playlist == null) return null;
+            if (playlist == null)
+                return (null, new List<MusicTrack>());
 
             var allTrackIdsInPlaylist = playlist.PlaylistTracks.Select(pt => pt.MusicTrackId).ToList();
 
             var query = _context.MusicTracks
                 .Include(t => t.Category)
-                .Where(t => !allTrackIdsInPlaylist.Contains(t.Id));
+                .Where(t => !allTrackIdsInPlaylist.Contains(t.Id));  // exclude tracks already in playlist
 
             if (!string.IsNullOrWhiteSpace(search))
             {
-                string loweredSearch = search.ToLower();
-                query = query.Where(t => t.Title.ToLower().Contains(loweredSearch));
+                var lowered = search.ToLower();
+                query = query.Where(t => t.Title.ToLower().Contains(lowered));
             }
 
             var availableTracks = await query.ToListAsync();
@@ -53,7 +54,7 @@ namespace SocialNetworkMusician.Services.Implementations
                 }).ToList()
             };
 
-            return model;
+            return (model, availableTracks);
         }
 
         public async Task<List<PlaylistViewModel>> GetUserPlaylistsAsync(string userId)
@@ -76,7 +77,20 @@ namespace SocialNetworkMusician.Services.Implementations
                 }).ToList()
             }).ToList();
         }
+        public async Task DeletePlaylistAsync(Guid playlistId, string userId)
+        {
+            var playlist = await _context.Playlists
+                .Include(p => p.PlaylistTracks)
+                .FirstOrDefaultAsync(p => p.Id == playlistId && p.UserId == userId);
 
+            if (playlist == null)
+                throw new Exception("Playlist not found or you don't have permission.");
+
+            _context.PlaylistTracks.RemoveRange(playlist.PlaylistTracks); 
+            _context.Playlists.Remove(playlist); 
+
+            await _context.SaveChangesAsync();
+        }
         public async Task CreatePlaylistAsync(string name, string userId)
         {
             var playlist = new Playlist
@@ -121,7 +135,7 @@ namespace SocialNetworkMusician.Services.Implementations
             var playlistTrack = playlist.PlaylistTracks.FirstOrDefault(pt => pt.MusicTrackId == trackId);
             if (playlistTrack != null)
             {
-                _context.Remove(playlistTrack);
+                _context.PlaylistTracks.Remove(playlistTrack);
                 await _context.SaveChangesAsync();
             }
         }
