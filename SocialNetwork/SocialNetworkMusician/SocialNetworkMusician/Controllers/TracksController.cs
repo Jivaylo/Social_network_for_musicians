@@ -112,37 +112,45 @@ namespace SocialNetworkMusician.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Create(TrackViewModel model, IFormFile MusicFile, IFormFile TrackImage)
+        public async Task<IActionResult> Create(TrackViewModel model)
         {
-            if (!ModelState.IsValid || MusicFile == null)
+            if (model.MusicFile == null && string.IsNullOrWhiteSpace(model.FileUrl))
             {
+                ModelState.AddModelError("", "Please either upload a music file or provide a valid music URL.");
                 ViewBag.Categories = new SelectList(_context.TrackCategories, "Id", "Name");
-                ModelState.AddModelError("", "Music file is required.");
                 return View(model);
             }
 
             var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
             Directory.CreateDirectory(uploadsFolder);
 
-            var uniqueFileName = Guid.NewGuid() + Path.GetExtension(MusicFile.FileName);
-            var musicPath = Path.Combine(uploadsFolder, uniqueFileName);
-
-            using (var stream = new FileStream(musicPath, FileMode.Create))
+            string? fileUrl = null;
+            if (model.MusicFile != null)
             {
-                await MusicFile.CopyToAsync(stream);
+                var uniqueFileName = Guid.NewGuid() + Path.GetExtension(model.MusicFile.FileName);
+                var musicPath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                using (var stream = new FileStream(musicPath, FileMode.Create))
+                {
+                    await model.MusicFile.CopyToAsync(stream);
+                }
+                fileUrl = "/uploads/" + uniqueFileName;
+            }
+            else if (!string.IsNullOrWhiteSpace(model.FileUrl))
+            {
+                fileUrl = model.FileUrl;
             }
 
             string? imageUrl = null;
-            if (TrackImage != null)
+            if (model.TrackImage != null)
             {
-                var imageFileName = Guid.NewGuid() + Path.GetExtension(TrackImage.FileName);
+                var imageFileName = Guid.NewGuid() + Path.GetExtension(model.TrackImage.FileName);
                 var imagePath = Path.Combine(uploadsFolder, imageFileName);
 
                 using (var stream = new FileStream(imagePath, FileMode.Create))
                 {
-                    await TrackImage.CopyToAsync(stream);
+                    await model.TrackImage.CopyToAsync(stream);
                 }
-
                 imageUrl = "/uploads/" + imageFileName;
             }
 
@@ -153,7 +161,7 @@ namespace SocialNetworkMusician.Controllers
                 Id = Guid.NewGuid(),
                 Title = model.Title,
                 Description = model.Description,
-                FileUrl = "/uploads/" + uniqueFileName,
+                FileUrl = fileUrl,
                 CategoryId = model.CategoryId,
                 UploadedAt = DateTime.UtcNow,
                 UserId = user.Id,

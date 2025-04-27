@@ -51,7 +51,7 @@ namespace SocialNetworkMusician.Controllers
                 IsFollowing = isFollowing,
                 FollowersCount = followersCount,
                 FollowingCount = followingCount,
-
+                TrackCount = user.MusicTracks.Count, 
                 Tracks = user.MusicTracks.Select(t => new TrackViewModel
                 {
                     Id = t.Id,
@@ -61,7 +61,6 @@ namespace SocialNetworkMusician.Controllers
                     UploadedAt = t.UploadedAt,
                     CategoryName = t.Category?.Name
                 }).ToList(),
-
                 Playlists = user.Playlists.Select(p => new PlaylistViewModel
                 {
                     Id = p.Id,
