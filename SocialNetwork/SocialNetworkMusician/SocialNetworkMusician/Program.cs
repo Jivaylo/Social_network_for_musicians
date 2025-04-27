@@ -5,6 +5,9 @@ using SocialNetworkMusician.Data;
 using SocialNetworkMusician.Data.Data;
 using SocialNetworkMusician.Data.SeedData;
 using System;
+using SocialNetworkMusician.Services;
+using SocialNetworkMusician.Services.Implementations;
+using SocialNetworkMusician.Services.Interfaces;
 
 namespace SocialNetworkMusician
 {
@@ -31,6 +34,8 @@ namespace SocialNetworkMusician
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied";
             });
             builder.Services.AddControllersWithViews();
+            builder.Services.AddScoped<IAdminService, AdminService>();
+            builder.Services.AddScoped<IErrorService, ErrorService>();
             builder.Services.AddRazorPages();
            
             var app = builder.Build();
