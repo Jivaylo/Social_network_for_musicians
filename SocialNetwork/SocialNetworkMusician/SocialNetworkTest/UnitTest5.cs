@@ -13,7 +13,7 @@ using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace SocialNetworkMusician.Tests
+namespace SocialNetworkTest
 {
     [TestFixture]
     public class ReportsControllerTests
