@@ -48,7 +48,7 @@ namespace SocialNetworkMusician.Controllers
                 RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
             };
 
-            return View("ErrorPage", model);
+            return View("ErrorPage", model);  
         }
     }
 }

@@ -5,7 +5,9 @@ VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SocialNetworkMusician", "SocialNetworkMusician\SocialNetworkMusician.csproj", "{8BE911FB-E2F9-4E62-B5DD-EEED723C5696}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocialNetworkMusician.Data", "SocialNetworkMusician.Data\SocialNetworkMusician.Data.csproj", "{96A4B763-5FF4-421A-BBC4-B62137070055}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SocialNetworkMusician.Data", "SocialNetworkMusician.Data\SocialNetworkMusician.Data.csproj", "{96A4B763-5FF4-421A-BBC4-B62137070055}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocialNetworkTest", "SocialNetworkTest\SocialNetworkTest.csproj", "{E0B1DC63-0871-4CE2-8D8D-0FCD333CCC76}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{96A4B763-5FF4-421A-BBC4-B62137070055}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96A4B763-5FF4-421A-BBC4-B62137070055}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96A4B763-5FF4-421A-BBC4-B62137070055}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0B1DC63-0871-4CE2-8D8D-0FCD333CCC76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0B1DC63-0871-4CE2-8D8D-0FCD333CCC76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0B1DC63-0871-4CE2-8D8D-0FCD333CCC76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0B1DC63-0871-4CE2-8D8D-0FCD333CCC76}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
