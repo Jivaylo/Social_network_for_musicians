@@ -103,17 +103,14 @@ namespace SocialNetworkMusician.Services.Implementations
             string? imageUrl = null;
             if (model.TrackImage != null)
             {
-                var imagesFolder = Path.Combine(uploadsFolder, "images");
-                Directory.CreateDirectory(imagesFolder);
-
                 var imageFileName = Guid.NewGuid() + Path.GetExtension(model.TrackImage.FileName);
-                var imagePath = Path.Combine(imagesFolder, imageFileName);
+                var imagePath = Path.Combine(uploadsFolder, imageFileName);
 
                 using (var stream = new FileStream(imagePath, FileMode.Create))
                 {
                     await model.TrackImage.CopyToAsync(stream);
                 }
-                imageUrl = "/uploads/images/" + imageFileName;
+                imageUrl = "/uploads/" + imageFileName;
             }
 
             var track = new MusicTrack
@@ -125,7 +122,7 @@ namespace SocialNetworkMusician.Services.Implementations
                 CategoryId = model.CategoryId,
                 UploadedAt = DateTime.UtcNow,
                 UserId = userId,
-                ImageUrl = imageUrl 
+                ImageUrl = imageUrl
             };
 
             _context.MusicTracks.Add(track);
@@ -175,7 +172,8 @@ namespace SocialNetworkMusician.Services.Implementations
                 _context.Likes.Remove(like);
             else
             {
-                if (dislike != null) _context.Dislikes.Remove(dislike);
+                if (dislike != null)
+                    _context.Dislikes.Remove(dislike);
                 _context.Likes.Add(new Like { Id = Guid.NewGuid(), UserId = userId, MusicTrackId = id });
             }
 
@@ -194,7 +192,8 @@ namespace SocialNetworkMusician.Services.Implementations
                 _context.Dislikes.Remove(dislike);
             else
             {
-                if (like != null) _context.Likes.Remove(like);
+                if (like != null)
+                    _context.Likes.Remove(like);
                 _context.Dislikes.Add(new Dislike { Id = Guid.NewGuid(), UserId = userId, MusicTrackId = id });
             }
 
@@ -267,7 +266,7 @@ namespace SocialNetworkMusician.Services.Implementations
 
             if (model.TrackImage != null)
             {
-                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/images");
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
                 Directory.CreateDirectory(uploadsFolder);
 
                 var fileName = Guid.NewGuid() + Path.GetExtension(model.TrackImage.FileName);
@@ -278,7 +277,7 @@ namespace SocialNetworkMusician.Services.Implementations
                     await model.TrackImage.CopyToAsync(stream);
                 }
 
-                track.ImageUrl = "/uploads/images/" + fileName; 
+                track.ImageUrl = "/uploads/" + fileName;
             }
 
             await _context.SaveChangesAsync();

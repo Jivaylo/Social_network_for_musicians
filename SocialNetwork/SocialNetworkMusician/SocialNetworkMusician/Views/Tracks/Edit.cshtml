@@ -20,7 +20,7 @@
             <textarea asp-for="Description" class="form-control" rows="3"></textarea>
         </div>
 
-        <div class="form-group mb-3">
+        <div class="form-group mb-4">
             <label asp-for="CategoryId">Category</label>
             <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.Categories">
                 <option value="">-- Select Category --</option>
@@ -35,19 +35,16 @@
         }
 
         <div class="form-group mb-4">
-            <label for="TrackImage" class="form-label text-white d-block">🎨 Upload Track Image</label>
-
-            <label class="custom-file-upload btn btn-outline-light">
-                <input type="file" id="TrackImage" name="TrackImage" accept="image/*" onchange="displayFileName(this)" />
-                📁 Choose Image
-            </label>
-
-            <span id="file-name" class="text-info ms-2"></span>
+            <button type="button" class="btn btn-info btn-sm" style="width: 150px;" onclick="document.getElementById('TrackImage').click()">
+                🎨 Upload Image
+            </button>
+            <input asp-for="TrackImage" type="file" accept="image/*" id="TrackImage" class="d-none" onchange="showImageFileName(this)" />
+            <small id="image-file-name" class="form-text text-info mt-1"></small>
         </div>
 
-        <div class="d-flex justify-content-between gap-2">
-            <button type="submit" class="btn btn-success px-4">Save Changes</button>
-            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary px-4">Cancel</a>
+        <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-success">Save Changes</button>
+            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">Cancel</a>
         </div>
     </form>
 </div>

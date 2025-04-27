@@ -15,7 +15,7 @@ namespace SocialNetworkMusician.Controllers
     {
         private readonly ITracksService _tracksService;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ApplicationDbContext _context; // Needed to load Categories!
+        private readonly ApplicationDbContext _context;
 
         public TracksController(ITracksService tracksService, UserManager<ApplicationUser> userManager, ApplicationDbContext context)
         {
@@ -37,7 +37,10 @@ namespace SocialNetworkMusician.Controllers
 
             if (model == null) return NotFound();
 
-            ViewBag.UserPlaylists = user != null ? (await _userManager.Users.Include(u => u.Playlists).FirstOrDefaultAsync(u => u.Id == user.Id))?.Playlists ?? new List<Playlist>() : new List<Playlist>();
+            ViewBag.UserPlaylists = user != null
+                ? (await _userManager.Users.Include(u => u.Playlists).FirstOrDefaultAsync(u => u.Id == user.Id))?.Playlists ?? new List<Playlist>()
+                : new List<Playlist>();
+
             return View(model);
         }
 
@@ -64,7 +67,6 @@ namespace SocialNetworkMusician.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-
 
         [Authorize]
         [HttpPost]
@@ -140,8 +142,8 @@ namespace SocialNetworkMusician.Controllers
             return View(track);
         }
 
-        [HttpPost]
         [Authorize]
+        [HttpPost]
         public async Task<IActionResult> Edit(Guid id, TrackViewModel model)
         {
             if (!ModelState.IsValid)

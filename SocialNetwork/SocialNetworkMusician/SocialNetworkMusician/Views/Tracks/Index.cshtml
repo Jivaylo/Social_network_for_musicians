@@ -10,7 +10,7 @@
             <th>Category</th>
             <th>Uploaded By</th>
             <th>Uploaded At</th>
-            <th></th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -41,5 +41,5 @@
 
 @if (User.Identity?.IsAuthenticated == true)
 {
-    <a asp-action="Create" class="btn btn-sm btn-success mt-3">➕ Submit New Track</a>
+    <a asp-action="Create" class="btn btn-success mt-4">➕ Submit New Track</a>
 }

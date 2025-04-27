@@ -1,9 +1,9 @@
-﻿@using SocialNetworkMusician.Data.Data
-@model TrackViewModel
+﻿@model TrackViewModel
+@using SocialNetworkMusician.Data.Data
 
 <div class="container d-flex justify-content-center">
     <div class="card bg-dark text-white shadow-lg p-4" style="width: 100%; max-width: 700px; border-radius: 15px;">
-    
+
         <h2 class="text-center mb-4">🎵 @Model.Title</h2>
 
         @if (!string.IsNullOrEmpty(Model.ImageUrl))
@@ -13,7 +13,7 @@
             </div>
         }
 
-        @if (Model.FileUrl.Contains("youtube.com") || Model.FileUrl.Contains("youtu.be"))
+        @if (!string.IsNullOrEmpty(Model.FileUrl) && (Model.FileUrl.Contains("youtube.com") || Model.FileUrl.Contains("youtu.be")))
         {
             string videoId = "";
 
@@ -33,34 +33,10 @@
 
             <div class="ratio ratio-16x9 mb-3">
                 <iframe id="yt-player" width="100%" height="400" src="https://www.youtube.com/embed/@videoId?enablejsapi=1"
-                        title="YouTube video"
-                        frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowfullscreen></iframe>
+                        allowfullscreen frameborder="0"></iframe>
             </div>
-
-            <script src="https://www.youtube.com/iframe_api"></script>
-            <script>
-                let ytPlayer;
-                let playCounted = false;
-
-                function onYouTubeIframeAPIReady() {
-                    ytPlayer = new YT.Player('yt-player', {
-                        events: {
-                            'onStateChange': onPlayerStateChange
-                        }
-                    });
-                }
-
-                function onPlayerStateChange(event) {
-                    if (event.data === YT.PlayerState.PLAYING && !playCounted) {
-                        playCounted = true;
-                        trackPlayed('@Model.Id');
-                    }
-                }
-            </script>
         }
-        else
+        else if (!string.IsNullOrEmpty(Model.FileUrl))
         {
             <audio controls class="w-100 mb-4" style="border-radius: 10px;" onplay="trackPlayed('@Model.Id')">
                 <source src="@Model.FileUrl" type="audio/mpeg" />
@@ -68,113 +44,109 @@
             </audio>
         }
 
-
-
         <p><strong>Description:</strong> @Model.Description</p>
         <p><strong>Category:</strong> @Model.CategoryName</p>
         <p><strong>Uploaded by:</strong> @Model.UserName</p>
         <p><strong>Uploaded at:</strong> @Model.UploadedAt.ToShortDateString()</p>
         <p><strong>Play Count:</strong> 🔁 @Model.PlayCount</p>
 
-  
-        <div class="d-flex align-items-center gap-3 mt-3">
-            <form method="post" asp-action="Like" asp-route-id="@Model.Id">
+        <div class="d-flex gap-3 mt-4 flex-wrap">
+            <form method="post" asp-action="Like" asp-route-id="@Model.Id" class="d-inline">
                 <button type="submit" class="btn btn-sm @(Model.IsLikedByCurrentUser ? "btn-success" : "btn-outline-success")">
                     👍 Like (@Model.LikeCount)
                 </button>
             </form>
 
-            <form method="post" asp-action="Dislike" asp-route-id="@Model.Id">
+            <form method="post" asp-action="Dislike" asp-route-id="@Model.Id" class="d-inline">
                 <button type="submit" class="btn btn-sm @(Model.IsDislikedByCurrentUser ? "btn-danger" : "btn-outline-danger")">
                     👎 Dislike (@Model.DislikeCount)
                 </button>
             </form>
-            @if (User.Identity?.IsAuthenticated == true &&
-            (User.Identity.Name == Model.UserName || User.IsInRole("Admin")))
-            {
-                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-warning">
-                    ✏️ Edit Track
-                </a>
-            }
-
-            <form asp-controller="Reports" asp-action="Create" method="get">
-                <input type="hidden" name="trackId" value="@Model.Id" />
-                <button class="btn btn-sm btn-outline-warning">🚨 Report</button>
-            </form>
 
             @if (User.Identity?.IsAuthenticated == true &&
             (User.Identity.Name == Model.UserName || User.IsInRole("Admin")))
             {
-                <form asp-action="Delete" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Are you sure you want to delete this track?');">
-                    <button type="submit" class="btn btn-danger btn-sm">🗑 Delete</button>
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-warning">✏️ Edit</a>
+
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure?');">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">🗑 Delete</button>
                 </form>
             }
+
+            <form asp-controller="Reports" asp-action="Create" method="get" class="d-inline">
+                <input type="hidden" name="trackId" value="@Model.Id" />
+                <button type="submit" class="btn btn-sm btn-outline-warning">🚨 Report</button>
+            </form>
         </div>
 
-   
-        @if (User.Identity.IsAuthenticated)
-        {
-            <form asp-controller="Playlists" asp-action="AddTrack" method="post" class="mt-4">
-                <input type="hidden" name="trackId" value="@Model.Id" />
-                <div class="input-group">
-                    <select name="playlistId" class="form-select">
-                        <option disabled selected>🎵 Add to Playlist</option>
-                        @foreach (var playlist in ViewBag.UserPlaylists as List<Playlist>)
-                        {
-                            <option value="@playlist.Id">@playlist.Name</option>
-                        }
-                    </select>
-                    <button type="submit" class="btn btn-outline-light">➕ Add</button>
-                </div>
-            </form>
-        }
+        <hr class="my-4" />
 
-        <hr class="bg-light mt-5 mb-4" />
+        <h5 class="text-light">💬 Comments (@Model.Comments.Count)</h5>
 
-  
-        <h4 class="mt-4">💬 Comments (@Model.Comments.Count)</h4>
         @if (Model.Comments.Any())
         {
             @foreach (var comment in Model.Comments)
             {
-                <div class="card bg-secondary p-3 mb-2">
-                    <strong class="text-warning">@comment.UserName</strong>
-                    <p class="mb-1">@comment.Content</p>
-                    <small class="text-light">@comment.CreatedAt.ToString("g")</small>
+                <div class="bg-secondary text-white p-2 rounded mb-2">
+                    <strong>@comment.UserName</strong><br />
+                    @comment.Content<br />
+                    <small>@comment.CreatedAt.ToString("g")</small>
                 </div>
             }
         }
         else
         {
-            <p class="text-muted">No comments yet. Be the first one to say something 🎤</p>
+            <p class="text-muted">No comments yet.</p>
         }
 
-        @if (User.Identity?.IsAuthenticated == true)
+        @if (User.Identity.IsAuthenticated)
         {
-            <form asp-action="AddComment" asp-route-id="@Model.Id" method="post" class="mt-4">
-                <div class="form-group mb-2">
-                    <textarea name="NewComment" class="form-control" rows="3" placeholder="Write a comment..." required></textarea>
-                </div>
+            <form asp-action="AddComment" asp-route-id="@Model.Id" method="post" class="mt-3">
+                <textarea name="newComment" class="form-control mb-2" required placeholder="Write a comment..."></textarea>
                 <button type="submit" class="btn btn-primary">Post Comment</button>
             </form>
         }
-        else
-        {
-            <p class="text-muted mt-3">You must be logged in to comment.</p>
-        }
 
-        <div class="text-end mt-5">
+        <div class="text-end mt-4">
             <a asp-action="Index" class="btn btn-outline-light">⬅ Back to Tracks</a>
         </div>
     </div>
 </div>
 
 @section Scripts {
+    <script src="https://www.youtube.com/iframe_api"></script>
+
     <script>
+        let ytPlayer;
+        let alreadyCounted = false;
+
+        function onYouTubeIframeAPIReady() {
+            ytPlayer = new YT.Player('yt-player', {
+                events: {
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.PLAYING) {
+                if (!alreadyCounted) {
+                    alreadyCounted = true;
+                    trackPlayed('@Model.Id');
+
+                    setTimeout(() => {
+                        alreadyCounted = false;
+                    }, 1000); 
+                }
+            }
+        }
+
         function trackPlayed(trackId) {
             fetch('/Tracks/IncrementPlayCount/' + trackId, {
                 method: 'POST'
-            });
+            }).catch(error => console.error('Error counting play:', error));
         }
     </script>
 }
+
+

@@ -44,19 +44,19 @@ namespace SocialNetworkMusician.Controllers
         public IActionResult ReportTrack(Guid trackId)
         {
             var model = _reportsService.PrepareReportTrackModel(trackId);
-            return View(model);
+            return View("Create", model); // same Create form
         }
 
         [HttpPost]
         public async Task<IActionResult> ReportTrack(ReportViewModel model)
         {
             if (!ModelState.IsValid)
-                return View(model);
+                return View("Create", model);
 
             var user = await _userManager.GetUserAsync(User);
             await _reportsService.SubmitTrackReportAsync(model, user.Id);
 
-            TempData["Success"] = "✅ Thank you for your report.";
+            TempData["Success"] = "✅ Track report submitted.";
             return RedirectToAction("Index", "Tracks");
         }
 
@@ -64,14 +64,14 @@ namespace SocialNetworkMusician.Controllers
         public IActionResult ReportUser(string userId)
         {
             var model = _reportsService.PrepareReportUserModel(userId);
-            return View(model);
+            return View("Create", model); 
         }
 
         [HttpPost]
         public async Task<IActionResult> ReportUser(ReportViewModel model)
         {
             if (!ModelState.IsValid)
-                return View(model);
+                return View("Create", model);
 
             var user = await _userManager.GetUserAsync(User);
             await _reportsService.SubmitUserReportAsync(model, user.Id);
