@@ -86,53 +86,86 @@ namespace SocialNetworkTest
         [Test]
         public async Task AddTrack_AddsTrackToPlaylist()
         {
+            // Arrange
             var playlist = new Playlist
             {
                 Id = Guid.NewGuid(),
                 Name = "Playlist",
                 UserId = _testUser.Id,
-                PlaylistTracks = new List<PlaylistTrack>() // ✅ Initialize here
+                PlaylistTracks = new List<PlaylistTrack>()
             };
-            var track = new MusicTrack { Id = Guid.NewGuid(), Title = "Track 1" };
 
-            _dbContext.Playlists.Add(playlist);
-            _dbContext.MusicTracks.Add(track);
-            _dbContext.SaveChanges();
+            var track = new MusicTrack
+            {
+                Id = Guid.NewGuid(),
+                Title = "Track 1",
+                FileUrl = "/uploads/test.mp3", // ✅ required field
+                UserId = _testUser.Id           // ✅ required field
+            };
 
+            await _dbContext.Playlists.AddAsync(playlist);
+            await _dbContext.MusicTracks.AddAsync(track);
+            await _dbContext.SaveChangesAsync(); // ✅
+
+            // Act
             var result = await _controller.AddTrack(playlist.Id, track.Id) as RedirectToActionResult;
 
-            var playlistAfter = _dbContext.Playlists.Include(p => p.PlaylistTracks).FirstOrDefault(p => p.Id == playlist.Id);
+            // Assert
+            var playlistAfter = await _dbContext.Playlists.Include(p => p.PlaylistTracks).FirstOrDefaultAsync(p => p.Id == playlist.Id);
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual("Details", result.ActionName);
 
             Assert.IsNotNull(playlistAfter);
             Assert.AreEqual(1, playlistAfter.PlaylistTracks.Count);
-            Assert.AreEqual("Details", result.ActionName);
+            Assert.AreEqual(track.Id, playlistAfter.PlaylistTracks.First().MusicTrackId);
         }
+
+
 
         [Test]
         public async Task RemoveTrack_RemovesTrackFromPlaylist()
         {
+            // Arrange
             var playlist = new Playlist
             {
                 Id = Guid.NewGuid(),
                 Name = "Playlist",
                 UserId = _testUser.Id,
-                PlaylistTracks = new List<PlaylistTrack>() // ✅ Initialize here
+                PlaylistTracks = new List<PlaylistTrack>()
             };
-            var track = new MusicTrack { Id = Guid.NewGuid(), Title = "Track 1" };
-            playlist.PlaylistTracks.Add(new PlaylistTrack { PlaylistId = playlist.Id, MusicTrackId = track.Id });
 
-            _dbContext.Playlists.Add(playlist);
-            _dbContext.MusicTracks.Add(track);
-            _dbContext.SaveChanges();
+            var track = new MusicTrack
+            {
+                Id = Guid.NewGuid(),
+                Title = "Track 1",
+                FileUrl = "/uploads/test.mp3", // ✅ required field
+                UserId = _testUser.Id           // ✅ required field
+            };
 
+            playlist.PlaylistTracks.Add(new PlaylistTrack
+            {
+                PlaylistId = playlist.Id,
+                MusicTrackId = track.Id
+            });
+
+            await _dbContext.Playlists.AddAsync(playlist);
+            await _dbContext.MusicTracks.AddAsync(track);
+            await _dbContext.SaveChangesAsync(); // ✅
+
+            // Act
             var result = await _controller.RemoveTrack(playlist.Id, track.Id) as RedirectToActionResult;
 
-            var updatedPlaylist = _dbContext.Playlists.Include(p => p.PlaylistTracks).FirstOrDefault(p => p.Id == playlist.Id);
+            // Assert
+            var updatedPlaylist = await _dbContext.Playlists.Include(p => p.PlaylistTracks).FirstOrDefaultAsync(p => p.Id == playlist.Id);
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual("Details", result.ActionName);
 
             Assert.IsNotNull(updatedPlaylist);
-            Assert.AreEqual(0, updatedPlaylist.PlaylistTracks.Count);
-            Assert.AreEqual("Details", result.ActionName);
+            Assert.AreEqual(0, updatedPlaylist.PlaylistTracks.Count); // ✅
         }
+
 
     }
 }

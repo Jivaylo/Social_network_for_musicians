@@ -19,7 +19,7 @@ namespace SocialNetworkMusician.Controllers
             _userManager = userManager;
         }
         [HttpGet]
-        public async Task<IActionResult> Create(Guid? trackId, string? reportedUserId)
+        public IActionResult Create(Guid? trackId, string? reportedUserId)
         {
             var model = new ReportViewModel
             {
@@ -30,14 +30,13 @@ namespace SocialNetworkMusician.Controllers
             return View(model);
         }
 
-       
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ReportViewModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
-       
 
             var user = await _userManager.GetUserAsync(User);
 
@@ -57,6 +56,7 @@ namespace SocialNetworkMusician.Controllers
             TempData["Success"] = "✅ Report submitted successfully.";
             return RedirectToAction("Index", "Tracks");
         }
+
 
         [HttpGet]
         public IActionResult ReportTrack(Guid trackId)
