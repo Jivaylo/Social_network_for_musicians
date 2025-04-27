@@ -2,34 +2,29 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SocialNetworkMusician.Data.Data;
-using SocialNetworkMusician.Data;
 using SocialNetworkMusician.Models;
+using SocialNetworkMusician.Services.Interfaces;
 
 namespace SocialNetworkMusician.Controllers
 {
     [Authorize]
     public class ReportsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IReportsService _reportsService;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public ReportsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public ReportsController(IReportsService reportsService, UserManager<ApplicationUser> userManager)
         {
-            _context = context;
+            _reportsService = reportsService;
             _userManager = userManager;
         }
+
         [HttpGet]
         public IActionResult Create(Guid? trackId, string? reportedUserId)
         {
-            var model = new ReportViewModel
-            {
-                TrackId = trackId,
-                ReportedUserId = reportedUserId
-            };
-
+            var model = _reportsService.PrepareCreateModel(trackId, reportedUserId);
             return View(model);
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -39,76 +34,49 @@ namespace SocialNetworkMusician.Controllers
                 return View(model);
 
             var user = await _userManager.GetUserAsync(User);
-
-            var report = new Report
-            {
-                Id = Guid.NewGuid(),
-                ReporterId = user.Id,
-                ReportedUserId = model.ReportedUserId,
-                TrackId = model.TrackId,
-                Reason = model.Reason,
-                ReportedAt = DateTime.UtcNow
-            };
-
-            _context.Reports.Add(report);
-            await _context.SaveChangesAsync();
+            await _reportsService.SubmitTrackReportAsync(model, user.Id);
 
             TempData["Success"] = "✅ Report submitted successfully.";
             return RedirectToAction("Index", "Tracks");
         }
 
-
         [HttpGet]
         public IActionResult ReportTrack(Guid trackId)
         {
-            return View(new ReportViewModel { TrackId = trackId });
+            var model = _reportsService.PrepareReportTrackModel(trackId);
+            return View(model);
         }
 
         [HttpPost]
         public async Task<IActionResult> ReportTrack(ReportViewModel model)
         {
+            if (!ModelState.IsValid)
+                return View(model);
+
             var user = await _userManager.GetUserAsync(User);
-            if (!ModelState.IsValid) return View(model);
+            await _reportsService.SubmitTrackReportAsync(model, user.Id);
 
-            var report = new Report
-            {
-                Id = Guid.NewGuid(),
-                ReporterId = user.Id,
-                TrackId = model.TrackId,
-                Reason = model.Reason
-            };
-
-            _context.Reports.Add(report);
-            await _context.SaveChangesAsync();
-
-            TempData["Success"] = "Thank you for your report. We'll review it soon.";
+            TempData["Success"] = "✅ Thank you for your report.";
             return RedirectToAction("Index", "Tracks");
         }
 
         [HttpGet]
         public IActionResult ReportUser(string userId)
         {
-            return View(new ReportViewModel { ReportedUserId = userId });
+            var model = _reportsService.PrepareReportUserModel(userId);
+            return View(model);
         }
 
         [HttpPost]
         public async Task<IActionResult> ReportUser(ReportViewModel model)
         {
+            if (!ModelState.IsValid)
+                return View(model);
+
             var user = await _userManager.GetUserAsync(User);
-            if (!ModelState.IsValid) return View(model);
+            await _reportsService.SubmitUserReportAsync(model, user.Id);
 
-            var report = new Report
-            {
-                Id = Guid.NewGuid(),
-                ReporterId = user.Id,
-                ReportedUserId = model.ReportedUserId,
-                Reason = model.Reason
-            };
-
-            _context.Reports.Add(report);
-            await _context.SaveChangesAsync();
-
-            TempData["Success"] = "User report submitted.";
+            TempData["Success"] = "✅ User report submitted.";
             return RedirectToAction("Index", "Users");
         }
     }
