@@ -36,7 +36,7 @@ namespace SocialNetworkMusician
             builder.Services.AddControllersWithViews();
             builder.Services.AddScoped<IAdminService, AdminService>();
             builder.Services.AddScoped<IErrorService, ErrorService>();
-            builder.Services.AddScoped<MessagesService>();
+            builder.Services.AddScoped<IMessagesService, MessagesService>();
             builder.Services.AddScoped<IPlaylistsService, PlaylistsService>();
             builder.Services.AddScoped<IReportsService, ReportsService>();
             builder.Services.AddScoped<ITracksService, TracksService>();

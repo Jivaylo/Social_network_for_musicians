@@ -2,10 +2,11 @@
 using SocialNetworkMusician.Data;
 using SocialNetworkMusician.Data.Data;
 using SocialNetworkMusician.Models;
+using SocialNetworkMusician.Services.Interfaces;
 
 namespace SocialNetworkMusician.Services.Implementations
 {
-    public class MessagesService
+    public class MessagesService : IMessagesService
     {
         private readonly ApplicationDbContext _context;
 

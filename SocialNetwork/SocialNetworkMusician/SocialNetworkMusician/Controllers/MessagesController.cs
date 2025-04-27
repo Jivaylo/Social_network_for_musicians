@@ -2,20 +2,18 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SocialNetworkMusician.Data.Data;
-using SocialNetworkMusician.Data;
 using SocialNetworkMusician.Models;
-using Microsoft.EntityFrameworkCore;
-using SocialNetworkMusician.Services.Implementations;
+using SocialNetworkMusician.Services.Interfaces;
 
 namespace SocialNetworkMusician.Controllers
 {
     [Authorize]
     public class MessagesController : Controller
     {
-        private readonly MessagesService _messagesService;
+        private readonly IMessagesService _messagesService;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public MessagesController(MessagesService messagesService, UserManager<ApplicationUser> userManager)
+        public MessagesController(IMessagesService messagesService, UserManager<ApplicationUser> userManager)
         {
             _messagesService = messagesService;
             _userManager = userManager;
@@ -35,27 +33,46 @@ namespace SocialNetworkMusician.Controllers
             return View(messages);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Compose(string recipientId)
+        {
+            var recipient = await _userManager.FindByIdAsync(recipientId);
+            if (recipient == null) return NotFound();
+
+            var model = new ComposeMessageViewModel
+            {
+                RecipientId = recipient.Id,
+                RecipientName = recipient.DisplayName
+            };
+
+            return View(model);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Compose(ComposeMessageViewModel model)
         {
-            var sender = await _userManager.GetUserAsync(User);
             if (!ModelState.IsValid)
             {
-                // handle errors
+                TempData["Error"] = "❌ Invalid input. Please fill all required fields.";
                 return View(model);
             }
 
+            var sender = await _userManager.GetUserAsync(User);
             await _messagesService.SendMessageAsync(model, sender.Id);
+
+            TempData["Success"] = "✅ Message sent successfully!";
             return RedirectToAction("Sent");
         }
 
         public async Task<IActionResult> Details(Guid id)
         {
             var currentUser = await _userManager.GetUserAsync(User);
-            var vm = await _messagesService.GetMessageDetailsAsync(id, currentUser.Id);
-            if (vm == null) return NotFound();
+            var message = await _messagesService.GetMessageDetailsAsync(id, currentUser.Id);
 
-            return View(vm);
+            if (message == null)
+                return NotFound();
+
+            return View(message);
         }
     }
 }
