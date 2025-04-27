@@ -36,6 +36,7 @@ namespace SocialNetworkMusician
             builder.Services.AddControllersWithViews();
             builder.Services.AddScoped<IAdminService, AdminService>();
             builder.Services.AddScoped<IErrorService, ErrorService>();
+            builder.Services.AddScoped<MessagesService>();
             builder.Services.AddRazorPages();
            
             var app = builder.Build();
