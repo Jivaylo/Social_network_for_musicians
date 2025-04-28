@@ -25,7 +25,7 @@ SoundSocial is a feature-rich ASP.NET Core MVC web application that connects mus
 ## 📷 Screenshots
 
 ![Image](https://github.com/user-attachments/assets/bc1ade6c-955b-4e82-b181-673ea2d71aec)
-- Track page with YouTube embed
+![Image](https://github.com/user-attachments/assets/71808815-40d9-4423-b64b-0059f789a00d)
 - Playlists
 - Admin dashboard
 - Messaging panel
