@@ -24,7 +24,7 @@ SoundSocial is a feature-rich ASP.NET Core MVC web application that connects mus
 
 ## 📷 Screenshots
 
-(https://github.com/Jivaylo/Social_network_for_musicians/blob/main/Screenshots/viber_image1.jpg?raw=true)
+![Image](https://github.com/user-attachments/assets/bc1ade6c-955b-4e82-b181-673ea2d71aec)
 - Track page with YouTube embed
 - Playlists
 - Admin dashboard
