@@ -9,5 +9,7 @@ namespace SocialNetworkMusician.Services.Interfaces
         Task BanUserAsync(string userId);
         Task UnbanUserAsync(string userId);
         Task<List<ReportViewModel>> GetReportsAsync();
+        Task PromoteToModeratorAsync(string userId);
+        Task UnpromoteFromAdminAsync(string userId);
     }
 }

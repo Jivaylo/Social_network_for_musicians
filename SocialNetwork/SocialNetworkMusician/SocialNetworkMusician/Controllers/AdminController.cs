@@ -54,6 +54,19 @@ namespace SocialNetworkMusician.Controllers
             var reports = await _adminService.GetReportsAsync();
             return View(reports);
         }
+        [HttpPost]
+        public async Task<IActionResult> PromoteToModerator(string userId)
+        {
+            await _adminService.PromoteToModeratorAsync(userId);
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UnpromoteFromAdmin(string userId)
+        {
+            await _adminService.UnpromoteFromAdminAsync(userId);
+            return RedirectToAction("Index");
+        }
     }
 }
 

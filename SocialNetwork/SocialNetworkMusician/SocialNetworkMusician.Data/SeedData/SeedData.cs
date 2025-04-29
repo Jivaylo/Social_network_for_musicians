@@ -40,6 +40,8 @@ namespace SocialNetworkMusician.Data.SeedData
             if (!await roleManager.RoleExistsAsync("User"))
                 await roleManager.CreateAsync(new IdentityRole("User"));
 
+            if (!await roleManager.RoleExistsAsync("Moderator"))
+                await roleManager.CreateAsync(new IdentityRole("Moderator"));
 
             var adminUsers = await userManager.Users
                 .Where(u => u.NormalizedEmail == adminEmail.ToUpper())
@@ -68,7 +70,7 @@ namespace SocialNetworkMusician.Data.SeedData
             {
                 await userManager.AddToRoleAsync(adminUser, "Admin");
             }
-
+           
 
             var demoUser = await userManager.FindByEmailAsync(demoEmail);
             if (demoUser == null)

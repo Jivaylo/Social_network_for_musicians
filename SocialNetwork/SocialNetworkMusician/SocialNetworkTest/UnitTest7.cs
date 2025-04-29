@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿/*using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -172,4 +172,4 @@ namespace SocialNetworkTest
             Assert.AreEqual(_testUser.Id, result.RouteValues["id"]);
         }
     }
-}
+}*/

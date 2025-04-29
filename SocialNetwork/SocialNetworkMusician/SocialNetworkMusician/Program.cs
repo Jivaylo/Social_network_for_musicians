@@ -50,6 +50,11 @@ namespace SocialNetworkMusician
                 app.UseStatusCodePagesWithReExecute("/Error/ErrorPage");
             }
             // await app.SeedAsync();
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                await SeedData.SeedAsync(app);
+            }
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

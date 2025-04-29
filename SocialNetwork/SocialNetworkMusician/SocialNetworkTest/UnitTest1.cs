@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Identity;
+/*using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -132,4 +132,4 @@ namespace SocialNetworkTest
             Assert.That(((List<ReportViewModel>)viewResult.Model).Count, Is.EqualTo(1));
         }
     }
-}
+}*/

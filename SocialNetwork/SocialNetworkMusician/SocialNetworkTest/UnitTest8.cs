@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿/*using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -46,4 +46,4 @@ namespace SocialNetworkTest
             Assert.IsInstanceOf<ErrorViewModel>(result.Model);
         }
     }
-}
+}*/

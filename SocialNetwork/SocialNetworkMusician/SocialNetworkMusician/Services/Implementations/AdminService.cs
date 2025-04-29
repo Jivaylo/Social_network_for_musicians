@@ -31,6 +31,7 @@ namespace SocialNetworkMusician.Services.Implementations
             foreach (var user in users)
             {
                 var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+                var isModerator = await _userManager.IsInRoleAsync(user, "Moderator");
 
                 viewModels.Add(new AdminUserViewModel
                 {
@@ -38,6 +39,7 @@ namespace SocialNetworkMusician.Services.Implementations
                     Email = user.Email,
                     DisplayName = user.DisplayName,
                     IsAdmin = isAdmin,
+                    IsModerator = isModerator,
                     IsBanned = user.LockoutEnd != null && user.LockoutEnd > DateTime.UtcNow,
                     JoinedDate = user.JoinedDate
                 });
@@ -49,7 +51,10 @@ namespace SocialNetworkMusician.Services.Implementations
                 ("email", "desc") => viewModels.OrderByDescending(u => u.Email).ToList(),
                 ("display", "asc") => viewModels.OrderBy(u => u.DisplayName).ToList(),
                 ("display", "desc") => viewModels.OrderByDescending(u => u.DisplayName).ToList(),
-                ("role", _) => viewModels.OrderByDescending(u => u.IsAdmin).ToList(),
+                ("role", _) => viewModels
+                    .OrderByDescending(u => u.IsAdmin)
+                    .ThenByDescending(u => u.IsModerator)
+                    .ToList(),
                 _ => viewModels
             };
 
@@ -125,6 +130,35 @@ namespace SocialNetworkMusician.Services.Implementations
                 .ToListAsync();
 
             return reports;
+        }
+        public async Task PromoteToModeratorAsync(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user != null && !await _userManager.IsInRoleAsync(user, "Moderator"))
+            {
+                await _userManager.AddToRoleAsync(user, "Moderator");
+
+                await _emailSender.SendEmailAsync(
+                    user.Email,
+                    "🎤 You're a Moderator Now!",
+                    $"Hi {user.DisplayName},<br><br>You've been promoted to <strong>Moderator</strong> on <strong>SoundSocial</strong>!"
+                );
+            }
+        }
+
+        public async Task UnpromoteFromAdminAsync(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user != null && await _userManager.IsInRoleAsync(user, "Admin"))
+            {
+                await _userManager.RemoveFromRoleAsync(user, "Admin");
+
+                await _emailSender.SendEmailAsync(
+                    user.Email,
+                    "🔽 Removed from Admin",
+                    $"Hi {user.DisplayName},<br><br>Your Admin privileges on <strong>SoundSocial</strong> have been revoked."
+                );
+            }
         }
     }
 }

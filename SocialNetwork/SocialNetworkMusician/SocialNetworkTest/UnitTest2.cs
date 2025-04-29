@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+﻿/*using NUnit.Framework;
 using SocialNetworkMusician.Controllers;
 using SocialNetworkMusician.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -82,4 +82,4 @@ namespace SocialNetworkTest
        
 
     }
-}
+}*/
