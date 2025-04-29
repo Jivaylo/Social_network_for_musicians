@@ -129,7 +129,7 @@ namespace SocialNetworkMusician.Services.Implementations
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteTrackAsync(Guid id, string userId, bool isAdmin)
+        public async Task DeleteTrackAsync(Guid id, string userId, bool isAdminOrModerator)
         {
             var track = await _context.MusicTracks
                 .Include(t => t.Likes)
@@ -141,12 +141,20 @@ namespace SocialNetworkMusician.Services.Implementations
             if (track == null)
                 throw new Exception("Track not found.");
 
-            if (track.UserId != userId && !isAdmin)
+            if (track.UserId != userId && !isAdminOrModerator)
                 throw new UnauthorizedAccessException();
 
-            if (track.PlaylistTracks.Any())
-                _context.PlaylistTracks.RemoveRange(track.PlaylistTracks);
+            
+            var playlistTracks = await _context.PlaylistTracks
+                .Where(pt => pt.MusicTrackId == id)
+                .ToListAsync();
 
+            if (playlistTracks.Any())
+            {
+                _context.PlaylistTracks.RemoveRange(playlistTracks);
+            }
+
+          
             if (track.Likes.Any())
                 _context.Likes.RemoveRange(track.Likes);
 
@@ -156,7 +164,9 @@ namespace SocialNetworkMusician.Services.Implementations
             if (track.Comments.Any())
                 _context.Comments.RemoveRange(track.Comments);
 
+          
             _context.MusicTracks.Remove(track);
+
             await _context.SaveChangesAsync();
         }
 

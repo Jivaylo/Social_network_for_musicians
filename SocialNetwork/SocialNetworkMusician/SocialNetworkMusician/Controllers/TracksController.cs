@@ -73,7 +73,10 @@ namespace SocialNetworkMusician.Controllers
         public async Task<IActionResult> Delete(Guid id)
         {
             var user = await _userManager.GetUserAsync(User);
-            await _tracksService.DeleteTrackAsync(id, user.Id, User.IsInRole("Admin"));
+
+            var isAdminOrModerator = User.IsInRole("Admin") || User.IsInRole("Moderator");
+
+            await _tracksService.DeleteTrackAsync(id, user.Id, isAdminOrModerator);
             return RedirectToAction(nameof(Index));
         }
 

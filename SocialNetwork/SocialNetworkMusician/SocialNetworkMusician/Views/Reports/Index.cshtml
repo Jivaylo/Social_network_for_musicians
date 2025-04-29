@@ -1,0 +1,71 @@
+﻿@model List<ReportViewModel>
+
+<h2 class="text-white mb-4">🚨 User Reports</h2>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">No reports yet.</p>
+}
+else
+{
+    <table class="table table-dark table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Reporter</th>
+                <th>Reported User</th>
+                <th>Track</th>
+                <th>Reason</th>
+                <th>Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var report in Model)
+            {
+                <tr>
+                    <td>@report.ReporterEmail</td>
+                    <td>@report.ReportedUserEmail</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(report.TrackTitle))
+                        {
+                            <span class="text-info">@report.TrackTitle</span>
+                        }
+                        else
+                        {
+                            <em>N/A</em>
+                        }
+                    </td>
+                    <td>@report.Reason</td>
+                    <td>@report.ReportedAt.ToString("g")</td>
+                    <td>
+                        @if (User.IsInRole("Admin") || User.IsInRole("Moderator"))
+                        {
+                            <div class="d-flex flex-column gap-1">
+                                @if (!string.IsNullOrEmpty(report.ReportedUserId))
+                                {
+                                    <form asp-action="BanUser" method="post" class="d-inline">
+                                        <input type="hidden" name="userId" value="@report.ReportedUserId" />
+                                        <button type="submit" class="btn btn-sm btn-danger">🚫 Ban User</button>
+                                    </form>
+                                }
+
+                                @if (report.TrackId != null)
+                                {
+                                    <form asp-controller="Tracks" asp-action="Delete" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this track?');">
+                                        <input type="hidden" name="id" value="@report.TrackId" />
+                                        <button type="submit" class="btn btn-sm btn-warning">🗑 Delete Track</button>
+                                    </form>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <span class="text-muted">No actions available</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+

@@ -6,12 +6,13 @@ using Microsoft.EntityFrameworkCore;
 using SocialNetworkMusician.Data;
 using SocialNetworkMusician.Data.Data;
 using SocialNetworkMusician.Models;
+using SocialNetworkMusician.Services.Implementations;
 using SocialNetworkMusician.Services.Interfaces;
 using static SocialNetworkMusician.Data.Data.MusicTrack;
 
 namespace SocialNetworkMusician.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Moderator")]
     public class AdminController : Controller
     {
         private readonly IAdminService _adminService;

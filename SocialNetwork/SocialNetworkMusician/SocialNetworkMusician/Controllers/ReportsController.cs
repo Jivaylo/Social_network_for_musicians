@@ -79,5 +79,12 @@ namespace SocialNetworkMusician.Controllers
             TempData["Success"] = "✅ User report submitted.";
             return RedirectToAction("Index", "Users");
         }
+        [HttpGet]
+        public async Task<IActionResult> Index()
+        {
+            ViewBag.HideFooter = true;
+            var reports = await _reportsService.GetAllReportsAsync();
+            return View(reports);
+        }
     }
 }

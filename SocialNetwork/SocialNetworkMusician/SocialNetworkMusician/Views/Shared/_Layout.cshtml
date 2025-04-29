@@ -1,8 +1,9 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @{
-    var noFooterControllers = new[] { "Tracks", "Admin", "Playlists", "Users" };
+    var noFooterControllers = new[] { "Tracks", "Admin", "Playlists", "Users", "Reports" };
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
     var showFooter = !noFooterControllers.Contains(currentController);
+
     if (User.Identity?.IsAuthenticated == true)
     {
         var db = Context.RequestServices.GetService(typeof(SocialNetworkMusician.Data.ApplicationDbContext)) as SocialNetworkMusician.Data.ApplicationDbContext;
@@ -35,13 +36,16 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        @if (User.IsInRole("Admin"))
+                        @if (User.IsInRole("Admin") || User.IsInRole("Moderator"))
                         {
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle text-warning" href="#" data-bs-toggle="dropdown">👑 Admin</a>
                                 <ul class="dropdown-menu dropdown-menu-dark">
-                                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="Index">Dashboard</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="Reports">📩 Reports</a></li>
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <li><a class="dropdown-item" asp-controller="Admin" asp-action="Index">Dashboard</a></li>
+                                    }
+                                    <li><a class="dropdown-item" asp-controller="Reports" asp-action="Index">📩 Reports</a></li>
                                 </ul>
                             </li>
                         }
