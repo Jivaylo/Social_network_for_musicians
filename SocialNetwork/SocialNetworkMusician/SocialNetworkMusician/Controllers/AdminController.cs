@@ -48,7 +48,7 @@ namespace SocialNetworkMusician.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Moderator")]
         public async Task<IActionResult> Reports()
         {
             var reports = await _adminService.GetReportsAsync();
@@ -65,6 +65,12 @@ namespace SocialNetworkMusician.Controllers
         public async Task<IActionResult> UnpromoteFromAdmin(string userId)
         {
             await _adminService.UnpromoteFromAdminAsync(userId);
+            return RedirectToAction("Index");
+        }
+        [HttpPost]
+        public async Task<IActionResult> UnpromoteFromModerator(string userId)
+        {
+            await _adminService.UnpromoteFromModeratorAsync(userId);
             return RedirectToAction("Index");
         }
     }

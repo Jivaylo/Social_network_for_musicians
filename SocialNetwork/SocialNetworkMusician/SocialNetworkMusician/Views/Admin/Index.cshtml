@@ -6,12 +6,6 @@
 
 <h2 class="text-white">👑 Admin Dashboard</h2>
 
-<div class="text-light mb-4">
-    <p><strong>Total Users:</strong> @ViewBag.UserCount</p>
-    <p><strong>Total Tracks:</strong> @ViewBag.TrackCount</p>
-    <p><strong>Total Plays:</strong> @ViewBag.TotalPlays</p>
-</div>
-
 <div class="d-flex justify-content-end mb-4 flex-wrap gap-2">
     <div class="btn-group">
         <button type="button" class="btn btn-sm btn-outline-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
@@ -75,7 +69,7 @@
                 <td>
                     <div class="d-flex flex-wrap gap-2">
 
-                        @* Admin Promotion/Unpromotion *@
+                       
                         @if (!user.IsAdmin)
                         {
                             <form asp-action="PromoteToAdmin" method="post">
@@ -91,16 +85,26 @@
                             </form>
                         }
 
-                        @* Moderator Promotion (Only if not Admin or Moderator) *@
-                        @if (!user.IsAdmin && !user.IsModerator)
+
+                        @if (!user.IsAdmin)
                         {
-                            <form asp-action="PromoteToModerator" method="post">
-                                <input type="hidden" name="userId" value="@user.Id" />
-                                <button class="btn btn-sm btn-outline-primary px-3">🎤 Promote Moderator</button>
-                            </form>
+                            if (!user.IsModerator)
+                            {
+                                <form asp-action="PromoteToModerator" method="post">
+                                    <input type="hidden" name="userId" value="@user.Id" />
+                                    <button class="btn btn-sm btn-outline-primary px-3">🎤 Promote Moderator</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <form asp-action="UnpromoteFromModerator" method="post">
+                                    <input type="hidden" name="userId" value="@user.Id" />
+                                    <button class="btn btn-sm btn-outline-secondary px-3">⬇️ Unpromote Moderator</button>
+                                </form>
+                            }
                         }
 
-                        @* Ban/Unban actions *@
+                  
                         @if (!user.IsBanned)
                         {
                             <form asp-action="BanUser" method="post">

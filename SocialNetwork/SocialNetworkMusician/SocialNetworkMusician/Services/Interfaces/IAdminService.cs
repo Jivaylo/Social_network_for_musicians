@@ -11,5 +11,6 @@ namespace SocialNetworkMusician.Services.Interfaces
         Task<List<ReportViewModel>> GetReportsAsync();
         Task PromoteToModeratorAsync(string userId);
         Task UnpromoteFromAdminAsync(string userId);
+        Task UnpromoteFromModeratorAsync(string userId);
     }
 }

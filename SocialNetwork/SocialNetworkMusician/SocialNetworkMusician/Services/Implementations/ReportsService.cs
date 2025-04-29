@@ -68,7 +68,7 @@ namespace SocialNetworkMusician.Services.Implementations
             await _context.SaveChangesAsync();
         }
 
-        // 🔥 EXTRA: for Admin Panel
+        
         public async Task<List<ReportViewModel>> GetAllReportsAsync()
         {
             var reports = await _context.Reports

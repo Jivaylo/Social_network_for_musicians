@@ -64,7 +64,7 @@
             </form>
 
             @if (User.Identity?.IsAuthenticated == true &&
-            (User.Identity.Name == Model.UserName || User.IsInRole("Admin")))
+            (User.Identity.Name == Model.UserName || User.IsInRole("Admin") || User.IsInRole("Moderator")))
             {
                 <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-warning">✏️ Edit</a>
 

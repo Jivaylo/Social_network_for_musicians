@@ -160,5 +160,19 @@ namespace SocialNetworkMusician.Services.Implementations
                 );
             }
         }
+        public async Task UnpromoteFromModeratorAsync(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user != null && await _userManager.IsInRoleAsync(user, "Moderator"))
+            {
+                await _userManager.RemoveFromRoleAsync(user, "Moderator");
+
+                await _emailSender.SendEmailAsync(
+                    user.Email,
+                    "🔽 Removed from Moderator",
+                    $"Hi {user.DisplayName},<br><br>Your Moderator privileges on <strong>SoundSocial</strong> have been removed."
+                );
+            }
+        }
     }
 }

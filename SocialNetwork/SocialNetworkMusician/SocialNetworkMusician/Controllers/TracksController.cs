@@ -136,7 +136,14 @@ namespace SocialNetworkMusician.Controllers
             var track = await _tracksService.GetTrackDetailsAsync(id, user?.Id);
 
             if (track == null) return NotFound();
-            if (track.UserName != user.UserName && !User.IsInRole("Admin")) return Forbid();
+
+        
+            if (track.UserName != user.UserName &&
+                !User.IsInRole("Admin") &&
+                !User.IsInRole("Moderator"))
+            {
+                return Forbid();
+            }
 
             ViewBag.Categories = new SelectList(_context.TrackCategories.ToList(), "Id", "Name", track.CategoryId);
             return View(track);
