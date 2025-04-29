@@ -104,21 +104,25 @@
                             }
                         }
 
-                  
-                        @if (!user.IsBanned)
+
+                        @if (!user.IsAdmin)
                         {
-                            <form asp-action="BanUser" method="post">
-                                <input type="hidden" name="userId" value="@user.Id" />
-                                <button class="btn btn-sm btn-outline-danger px-3">🚫 Ban</button>
-                            </form>
+                            if (!user.IsBanned)
+                            {
+                                <form asp-action="BanUser" method="post">
+                                    <input type="hidden" name="userId" value="@user.Id" />
+                                    <button class="btn btn-sm btn-outline-danger px-3">🚫 Ban</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <form asp-action="UnbanUser" method="post">
+                                    <input type="hidden" name="userId" value="@user.Id" />
+                                    <button class="btn btn-sm btn-outline-warning text-dark px-3">🔓 Unban</button>
+                                </form>
+                            }
                         }
-                        else
-                        {
-                            <form asp-action="UnbanUser" method="post">
-                                <input type="hidden" name="userId" value="@user.Id" />
-                                <button class="btn btn-sm btn-outline-warning text-dark px-3">🔓 Unban</button>
-                            </form>
-                        }
+
 
                         <a asp-controller="Users" asp-action="Profile" asp-route-id="@user.Id" class="btn btn-sm btn-outline-info px-3">
                             👤 View Profile
