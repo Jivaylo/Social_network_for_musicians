@@ -2,7 +2,10 @@
 @{
     var noFooterControllers = new[] { "Tracks", "Admin", "Playlists", "Users", "Reports" };
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
-    var showFooter = !noFooterControllers.Contains(currentController);
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+
+    var hideFooterForThisPage = noFooterControllers.Contains(currentController) || (currentController == "Home" && currentAction == "Rules");
+    var showFooter = !hideFooterForThisPage;
 
     if (User.Identity?.IsAuthenticated == true)
     {
@@ -24,7 +27,7 @@
     <link rel="stylesheet" href="~/SocialNetworkMusician.styles.css" asp-append-version="true" />
 </head>
 
-<body style="background: linear-gradient(to right, #0f2027, #203a43, #2c5364); color: white; display: flex; flex-direction: column; min-height: 100vh;">
+<body style="background: linear-gradient(to right, #0f2027, #203a43, #2c5364); color: white; display: flex; flex-direction: column; min-height: 100vh; overflow-y: auto;">
 
     <header>
         <nav class="navbar navbar-expand-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
@@ -69,6 +72,9 @@
                                 <li><a class="dropdown-item" asp-controller="Users" asp-action="Index">Browse</a></li>
                                 <li><a class="dropdown-item" asp-controller="Users" asp-action="MyProfile">My Profile</a></li>
                             </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-controller="Home" asp-action="Rules">📜 Rules</a>
                         </li>
                     </ul>
                     <partial name="_LoginPartial" />

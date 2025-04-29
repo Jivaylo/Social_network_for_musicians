@@ -32,6 +32,13 @@
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
 
+            <div class="form-check mt-3">
+                <input class="form-check-input" type="checkbox" id="agreeRules" name="AgreeRules" required />
+                <label class="form-check-label text-light" for="agreeRules">
+                    📜 I agree to the <a asp-controller="Home" asp-action="Rules" target="_blank">Community Rules</a>
+                </label>
+            </div>
+
             <button id="registerSubmit" type="submit" class="btn btn-success w-100">🚀 Register</button>
         </form>
 
