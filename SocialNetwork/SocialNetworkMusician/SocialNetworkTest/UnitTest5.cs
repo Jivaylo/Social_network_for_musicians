@@ -1,17 +1,17 @@
-﻿/*using Microsoft.AspNetCore.Http;
+﻿using NUnit.Framework;
+using Moq;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.EntityFrameworkCore;
-using Moq;
-using NUnit.Framework;
+using Microsoft.AspNetCore.Http;
 using SocialNetworkMusician.Controllers;
-using SocialNetworkMusician.Data;
-using SocialNetworkMusician.Data.Data;
 using SocialNetworkMusician.Models;
-using System;
+using SocialNetworkMusician.Services.Interfaces;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System;
+using SocialNetworkMusician.Data.Data;
 
 namespace SocialNetworkTest
 {
@@ -19,21 +19,17 @@ namespace SocialNetworkTest
     public class ReportsControllerTests
     {
         private ReportsController _controller;
-        private ApplicationDbContext _dbContext;
+        private Mock<IReportsService> _reportsServiceMock;
         private Mock<UserManager<ApplicationUser>> _userManagerMock;
         private ApplicationUser _testUser;
 
         [SetUp]
         public void Setup()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
+            _reportsServiceMock = new Mock<IReportsService>();
 
-            _dbContext = new ApplicationDbContext(options);
-
-            var store = new Mock<IUserStore<ApplicationUser>>();
-            _userManagerMock = new Mock<UserManager<ApplicationUser>>(store.Object, null, null, null, null, null, null, null, null);
+            var userStoreMock = new Mock<IUserStore<ApplicationUser>>();
+            _userManagerMock = new Mock<UserManager<ApplicationUser>>(userStoreMock.Object, null, null, null, null, null, null, null, null);
 
             _testUser = new ApplicationUser
             {
@@ -42,10 +38,9 @@ namespace SocialNetworkTest
                 DisplayName = "Test User"
             };
 
-            _dbContext.Users.Add(_testUser);
-            _dbContext.SaveChanges();
-
             _userManagerMock.Setup(u => u.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(_testUser);
+
+            _controller = new ReportsController(_reportsServiceMock.Object, _userManagerMock.Object);
 
             var fakeIdentity = new ClaimsIdentity(new[]
             {
@@ -53,18 +48,24 @@ namespace SocialNetworkTest
                 new Claim(ClaimTypes.Email, _testUser.Email)
             }, "TestAuth");
 
-            var fakeUser = new ClaimsPrincipal(fakeIdentity);
-
-            _controller = new ReportsController(_dbContext, _userManagerMock.Object);
             _controller.ControllerContext = new ControllerContext
             {
-                HttpContext = new DefaultHttpContext { User = fakeUser }
+                HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal(fakeIdentity) }
             };
+
+            _controller.TempData = new TempDataDictionary(
+                new DefaultHttpContext(),
+                Mock.Of<ITempDataProvider>()
+            );
         }
 
         [Test]
         public void Create_Get_ReturnsViewWithModel()
         {
+            // Arrange
+            _reportsServiceMock.Setup(r => r.PrepareCreateModel(It.IsAny<Guid?>(), It.IsAny<string>()))
+                .Returns(new ReportViewModel());
+
             // Act
             var result = _controller.Create(Guid.NewGuid(), "user123") as ViewResult;
 
@@ -74,7 +75,7 @@ namespace SocialNetworkTest
         }
 
         [Test]
-        public async Task Create_Post_ValidReport_RedirectsToTracks()
+        public async Task Create_Post_ValidModel_RedirectsToTracks()
         {
             // Arrange
             var model = new ReportViewModel
@@ -83,37 +84,27 @@ namespace SocialNetworkTest
                 TrackId = Guid.NewGuid()
             };
 
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-            {
-        new Claim(ClaimTypes.NameIdentifier, _testUser.Id),
-            }, "mock"));
-
-            _controller.ControllerContext = new ControllerContext
-            {
-                HttpContext = new DefaultHttpContext { User = user }
-            };
-
-            _controller.TempData = new TempDataDictionary(
-                new DefaultHttpContext(),
-                Mock.Of<ITempDataProvider>()
-            );
-
             // Act
             var result = await _controller.Create(model) as RedirectToActionResult;
 
             // Assert
+            _reportsServiceMock.Verify(r => r.SubmitTrackReportAsync(model, _testUser.Id), Times.Once);
             Assert.IsNotNull(result);
             Assert.AreEqual("Index", result.ActionName);
             Assert.AreEqual("Tracks", result.ControllerName);
         }
 
-
-
         [Test]
         public void ReportTrack_Get_ReturnsView()
         {
+            // Arrange
+            _reportsServiceMock.Setup(r => r.PrepareReportTrackModel(It.IsAny<Guid>()))
+                .Returns(new ReportViewModel());
+
+            // Act
             var result = _controller.ReportTrack(Guid.NewGuid()) as ViewResult;
 
+            // Assert
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<ReportViewModel>(result.Model);
         }
@@ -125,39 +116,30 @@ namespace SocialNetworkTest
             var model = new ReportViewModel
             {
                 TrackId = Guid.NewGuid(),
-                Reason = "Inappropriate content"
+                Reason = "Inappropriate"
             };
-
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-            {
-        new Claim(ClaimTypes.NameIdentifier, _testUser.Id),
-            }, "mock"));
-
-            _controller.ControllerContext = new ControllerContext
-            {
-                HttpContext = new DefaultHttpContext { User = user }
-            };
-
-            _controller.TempData = new TempDataDictionary(
-                new DefaultHttpContext(),
-                Mock.Of<ITempDataProvider>()
-            );
 
             // Act
             var result = await _controller.ReportTrack(model) as RedirectToActionResult;
 
             // Assert
+            _reportsServiceMock.Verify(r => r.SubmitTrackReportAsync(model, _testUser.Id), Times.Once);
             Assert.IsNotNull(result);
             Assert.AreEqual("Index", result.ActionName);
             Assert.AreEqual("Tracks", result.ControllerName);
         }
 
-
         [Test]
         public void ReportUser_Get_ReturnsView()
         {
+            // Arrange
+            _reportsServiceMock.Setup(r => r.PrepareReportUserModel(It.IsAny<string>()))
+                .Returns(new ReportViewModel());
+
+            // Act
             var result = _controller.ReportUser("user123") as ViewResult;
 
+            // Assert
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<ReportViewModel>(result.Model);
         }
@@ -168,33 +150,33 @@ namespace SocialNetworkTest
             // Arrange
             var model = new ReportViewModel
             {
-                ReportedUserId = Guid.NewGuid().ToString(),
-                Reason = "Bad behavior"
+                ReportedUserId = "user456",
+                Reason = "Abuse"
             };
-
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-            {
-        new Claim(ClaimTypes.NameIdentifier, _testUser.Id),
-            }, "mock"));
-
-            _controller.ControllerContext = new ControllerContext
-            {
-                HttpContext = new DefaultHttpContext { User = user }
-            };
-
-            _controller.TempData = new TempDataDictionary(
-                new DefaultHttpContext(),
-                Mock.Of<ITempDataProvider>()
-            );
 
             // Act
             var result = await _controller.ReportUser(model) as RedirectToActionResult;
 
             // Assert
+            _reportsServiceMock.Verify(r => r.SubmitUserReportAsync(model, _testUser.Id), Times.Once);
             Assert.IsNotNull(result);
             Assert.AreEqual("Index", result.ActionName);
             Assert.AreEqual("Users", result.ControllerName);
         }
 
+        [Test]
+        public async Task Index_ReturnsView_WithReportsList()
+        {
+            // Arrange
+            _reportsServiceMock.Setup(r => r.GetAllReportsAsync())
+                .ReturnsAsync(new List<ReportViewModel>());
+
+            // Act
+            var result = await _controller.Index() as ViewResult;
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOf<List<ReportViewModel>>(result.Model);
+        }
     }
-}*/
+}

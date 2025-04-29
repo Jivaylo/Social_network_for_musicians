@@ -1,13 +1,12 @@
-﻿/*using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
 using SocialNetworkMusician.Controllers;
-using SocialNetworkMusician.Data;
 using SocialNetworkMusician.Data.Data;
 using SocialNetworkMusician.Models;
+using SocialNetworkMusician.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
@@ -18,7 +17,7 @@ namespace SocialNetworkTest
     [TestFixture]
     public class MessagesControllerTests
     {
-        private ApplicationDbContext _dbContext;
+        private Mock<IMessagesService> _messagesServiceMock;
         private Mock<UserManager<ApplicationUser>> _userManagerMock;
         private MessagesController _controller;
         private ApplicationUser _testUser;
@@ -26,10 +25,7 @@ namespace SocialNetworkTest
         [SetUp]
         public void Setup()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options;
-            _dbContext = new ApplicationDbContext(options);
+            _messagesServiceMock = new Mock<IMessagesService>();
 
             var store = new Mock<IUserStore<ApplicationUser>>();
             _userManagerMock = new Mock<UserManager<ApplicationUser>>(store.Object, null, null, null, null, null, null, null, null);
@@ -44,102 +40,98 @@ namespace SocialNetworkTest
 
             _userManagerMock.Setup(u => u.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(_testUser);
 
-            _controller = new MessagesController(_dbContext, _userManagerMock.Object);
-            _controller.ControllerContext = new ControllerContext
+            _controller = new MessagesController(_messagesServiceMock.Object, _userManagerMock.Object)
             {
-                HttpContext = new DefaultHttpContext()
+                ControllerContext = new ControllerContext
+                {
+                    HttpContext = new DefaultHttpContext
+                    {
+                        User = new ClaimsPrincipal(new ClaimsIdentity(new[]
+                        {
+                            new Claim(ClaimTypes.NameIdentifier, _testUser.Id)
+                        }))
+                    }
+                }
             };
         }
 
-        [TearDown]
-        public void TearDown()
+        [Test]
+        public async Task Inbox_ReturnsView_WithInboxMessages()
         {
-            _dbContext.Database.EnsureDeleted();
-            _dbContext.Dispose();
+            _messagesServiceMock.Setup(x => x.GetInboxMessagesAsync(_testUser.Id))
+                .ReturnsAsync(new List<MessageViewModel>());
+
+            var result = await _controller.Inbox();
+
+            Assert.IsInstanceOf<ViewResult>(result);
+            var viewResult = result as ViewResult;
+            Assert.IsAssignableFrom<List<MessageViewModel>>(viewResult!.Model);
         }
 
         [Test]
-        public async Task Inbox_ReturnsView_WithMessages()
+        public async Task Sent_ReturnsView_WithSentMessages()
         {
-            // Arrange
-            _dbContext.Messages.Add(new Message
-            {
-                Id = Guid.NewGuid(),
-                SenderId = _testUser.Id,
-                RecipientId = _testUser.Id,
-                Content = "Test Message",
-                SentAt = DateTime.UtcNow
-            });
-            await _dbContext.SaveChangesAsync();
+            _messagesServiceMock.Setup(x => x.GetSentMessagesAsync(_testUser.Id))
+                .ReturnsAsync(new List<MessageViewModel>());
 
-            // Act
-            var result = await _controller.Inbox() as ViewResult;
+            var result = await _controller.Sent();
 
-            // Assert
-            Assert.IsNotNull(result);
-            Assert.IsInstanceOf<List<MessageViewModel>>(result.Model);
+            Assert.IsInstanceOf<ViewResult>(result);
+            var viewResult = result as ViewResult;
+            Assert.IsAssignableFrom<List<MessageViewModel>>(viewResult!.Model);
         }
 
         [Test]
-        public async Task Sent_ReturnsView_WithMessages()
+        public async Task Compose_Get_ValidRecipient_ReturnsView()
         {
-            // Arrange
-            _dbContext.Messages.Add(new Message
-            {
-                Id = Guid.NewGuid(),
-                SenderId = _testUser.Id,
-                RecipientId = Guid.NewGuid().ToString(),
-                Content = "Sent Message",
-                SentAt = DateTime.UtcNow
-            });
-            await _dbContext.SaveChangesAsync();
+            var recipient = new ApplicationUser { Id = Guid.NewGuid().ToString(), DisplayName = "Recipient" };
+            _userManagerMock.Setup(x => x.FindByIdAsync(recipient.Id)).ReturnsAsync(recipient);
 
-            // Act
-            var result = await _controller.Sent() as ViewResult;
+            var result = await _controller.Compose(recipient.Id);
 
-            // Assert
-            Assert.IsNotNull(result);
-            Assert.IsInstanceOf<List<MessageViewModel>>(result.Model);
+            Assert.IsInstanceOf<ViewResult>(result);
+            var viewResult = result as ViewResult;
+            Assert.IsAssignableFrom<ComposeMessageViewModel>(viewResult!.Model);
         }
 
         [Test]
-        public async Task Compose_Get_ReturnsView()
+        public async Task Compose_Get_RecipientNotFound_ReturnsNotFound()
         {
-            // Arrange
-            var recipient = new ApplicationUser
-            {
-                Id = Guid.NewGuid().ToString(),
-                DisplayName = "Recipient"
-            };
-            _userManagerMock.Setup(u => u.FindByIdAsync(recipient.Id)).ReturnsAsync(recipient);
+            _userManagerMock.Setup(x => x.FindByIdAsync(It.IsAny<string>())).ReturnsAsync((ApplicationUser)null!);
 
-            // Act
-            var result = await _controller.Compose(recipient.Id) as ViewResult;
+            var result = await _controller.Compose(Guid.NewGuid().ToString());
 
-            // Assert
-            Assert.IsNotNull(result);
-            Assert.IsInstanceOf<ComposeMessageViewModel>(result.Model);
+            Assert.IsInstanceOf<NotFoundResult>(result);
+        }
+
+      
+        [Test]
+        public async Task Details_MessageExists_ReturnsView()
+        {
+            var messageId = Guid.NewGuid();
+            var message = new MessageViewModel { Id = messageId };
+
+            _messagesServiceMock.Setup(x => x.GetMessageDetailsAsync(messageId, _testUser.Id))
+                .ReturnsAsync(message);
+
+            var result = await _controller.Details(messageId);
+
+            Assert.IsInstanceOf<ViewResult>(result);
+            var viewResult = result as ViewResult;
+            Assert.AreEqual(message, viewResult!.Model);
         }
 
         [Test]
-        public async Task Compose_Post_Valid_RedirectsToSent()
+        public async Task Details_MessageNotFound_ReturnsNotFound()
         {
-            // Arrange
-            var model = new ComposeMessageViewModel
-            {
-                RecipientId = Guid.NewGuid().ToString(),
-                Content = "Hello!"
-            };
+            var messageId = Guid.NewGuid();
 
-            // Act
-            var result = await _controller.Compose(model) as RedirectToActionResult;
+            _messagesServiceMock.Setup(x => x.GetMessageDetailsAsync(messageId, _testUser.Id))
+                .ReturnsAsync((MessageViewModel)null!);
 
-            // Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual("Sent", result.ActionName);
+            var result = await _controller.Details(messageId);
+
+            Assert.IsInstanceOf<NotFoundResult>(result);
         }
-
-     
     }
-}*/
-
+}
