@@ -14,14 +14,7 @@
         <textarea asp-for="Bio" class="form-control" rows="4"></textarea>
     </div>
 
-    <div class="mb-3">
-        <label class="form-label">Profile Image</label><br />
-        @if (!string.IsNullOrEmpty(Model.ExistingImageUrl))
-        {
-            <img src="@Model.ExistingImageUrl" alt="Profile" width="100" class="mb-2 rounded-circle" />
-        }
-        <input type="file" asp-for="ProfileImage" class="form-control" />
-    </div>
+   
 
     <button type="submit" class="btn btn-primary">💾 Save Changes</button>
 </form>

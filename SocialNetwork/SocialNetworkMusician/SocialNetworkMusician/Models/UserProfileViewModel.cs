@@ -6,6 +6,7 @@
         public string DisplayName { get; set; } = null!;
         public string Email { get; set; } = null!;
         public DateTime? JoinedDate { get; set; }
+        public string? Bio { get; set; }
 
         public List<TrackViewModel> Tracks { get; set; } = new();
 

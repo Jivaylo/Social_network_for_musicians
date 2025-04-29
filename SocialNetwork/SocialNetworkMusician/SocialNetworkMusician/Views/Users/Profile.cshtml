@@ -2,6 +2,11 @@
 
 <h2 class="text-white">@Model.DisplayName's Profile</h2>
 
+@if (!string.IsNullOrWhiteSpace(Model.Bio))
+{
+    <p class="text-light fst-italic">📝 @Model.Bio</p>
+}
+
 @if (User.Identity?.IsAuthenticated == true && User.Identity.Name == Model.Email)
 {
     <a asp-action="EditProfile" asp-controller="Users" class="btn btn-outline-warning float-end mb-3">

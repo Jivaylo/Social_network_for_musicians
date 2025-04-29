@@ -57,6 +57,7 @@ namespace SocialNetworkMusician.Services.Implementations
                 Id = user.Id,
                 DisplayName = user.DisplayName,
                 Email = user.Email,
+                Bio = user.Bio,
                 JoinedDate = user.JoinedDate,
                 IsFollowing = isFollowing,
                 FollowersCount = followersCount,
