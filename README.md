@@ -119,8 +119,8 @@ dotnet run
 If seeded:
 
 ```txt
-📧 Email: admin@music.com  
-🔑 Password: Admin123!
+📧 Email: asasasa@asas.sa  
+🔑 Password: Ivo123@
 ```
 
 ---
