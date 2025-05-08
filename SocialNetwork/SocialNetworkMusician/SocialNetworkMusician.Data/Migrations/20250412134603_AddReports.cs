@@ -9,9 +9,7 @@ namespace SocialNetworkMusician.Data.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "Status",
-                table: "MusicTracks");
+         
 
             migrationBuilder.CreateTable(
                 name: "Reports",
@@ -69,12 +67,7 @@ namespace SocialNetworkMusician.Data.Migrations
             migrationBuilder.DropTable(
                 name: "Reports");
 
-            migrationBuilder.AddColumn<int>(
-                name: "Status",
-                table: "MusicTracks",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
+            
         }
     }
 }
