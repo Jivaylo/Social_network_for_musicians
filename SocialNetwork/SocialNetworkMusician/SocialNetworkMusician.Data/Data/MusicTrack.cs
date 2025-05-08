@@ -37,7 +37,7 @@ namespace SocialNetworkMusician.Data.Data
         public ApplicationUser User { get; set; } = null!;
 
         public Guid? CategoryId { get; set; }
-       
+
         [MaxLength(300)]
         public string? AdminNote { get; set; }
 
