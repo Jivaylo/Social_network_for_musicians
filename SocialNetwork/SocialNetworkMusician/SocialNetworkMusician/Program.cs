@@ -28,10 +28,22 @@ namespace SocialNetworkMusician
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            builder.Services.Configure<CookiePolicyOptions>(options =>
+            {
+                options.Secure = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always;
+            });
+
             builder.Services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/Identity/Account/Login";
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always; 
+                options.Cookie.SameSite = SameSiteMode.Strict; 
+            });
+            builder.Services.AddAntiforgery(options =>
+            {
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.Cookie.SameSite = SameSiteMode.Strict;
             });
             builder.Services.AddControllersWithViews();
             builder.Services.AddScoped<IAdminService, AdminService>();
@@ -60,6 +72,7 @@ namespace SocialNetworkMusician
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseCookiePolicy();
 
             app.UseAuthentication();
             app.UseAuthorization();

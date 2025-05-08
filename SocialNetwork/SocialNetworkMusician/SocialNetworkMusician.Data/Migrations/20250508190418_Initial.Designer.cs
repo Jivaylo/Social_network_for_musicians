@@ -12,7 +12,7 @@ using SocialNetworkMusician.Data;
 namespace SocialNetworkMusician.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250508143628_Initial")]
+    [Migration("20250508190418_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

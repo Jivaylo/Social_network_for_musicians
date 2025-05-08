@@ -18,7 +18,7 @@ namespace SocialNetworkMusician.Data.SeedData
         private const string demoEmail = "user@music.com";
         private const string demoPassword = "User123!";
 
-
+            
         public static async Task SeedAsync(this IApplicationBuilder app)
         {
             using var scope = app.ApplicationServices.CreateScope();
@@ -63,7 +63,14 @@ namespace SocialNetworkMusician.Data.SeedData
                     Email = adminEmail,
                     DisplayName = "Admin"
                 };
-                await userManager.CreateAsync(adminUser, adminPassword);
+                var result = await userManager.CreateAsync(adminUser, adminPassword);
+                if (!result.Succeeded)
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        Console.WriteLine($"Error creating admin user: {error.Description}");
+                    }
+                }
             }
 
             if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
