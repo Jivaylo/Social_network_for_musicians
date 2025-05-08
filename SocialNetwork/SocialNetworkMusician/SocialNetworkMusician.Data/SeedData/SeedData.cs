@@ -11,13 +11,10 @@ namespace SocialNetworkMusician.Data.SeedData
 {
     public static class SeedData
     {
-        public static async Task InitializeAsync(IServiceProvider serviceProvider)
-        { }
-             private const string adminEmail = "admin@music.com";
+        private const string adminEmail = "admin@music.com";
         private const string adminPassword = "Admin123!";
         private const string demoEmail = "user@music.com";
         private const string demoPassword = "User123!";
-        
 
         public static async Task SeedAsync(this IApplicationBuilder app)
         {
@@ -26,70 +23,72 @@ namespace SocialNetworkMusician.Data.SeedData
             var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-           
 
             if (context.Database.GetPendingMigrations().Any())
-            {
                 context.Database.Migrate();
-            }
 
-
-            if (!await roleManager.RoleExistsAsync("Admin"))
-                await roleManager.CreateAsync(new IdentityRole("Admin"));
-
-            if (!await roleManager.RoleExistsAsync("User"))
-                await roleManager.CreateAsync(new IdentityRole("User"));
-
-            if (!await roleManager.RoleExistsAsync("Moderator"))
-                await roleManager.CreateAsync(new IdentityRole("Moderator"));
-
-            var adminUsers = await userManager.Users
-                .Where(u => u.NormalizedEmail == adminEmail.ToUpper())
-                .ToListAsync();
-
-            if (adminUsers.Count > 1)
+            string[] roles = { "Admin", "User", "Moderator" };
+            foreach (var role in roles)
             {
-                for (int i = 1; i < adminUsers.Count; i++)
-                    await userManager.DeleteAsync(adminUsers[i]);
+                if (!await roleManager.RoleExistsAsync(role))
+                    await roleManager.CreateAsync(new IdentityRole(role));
             }
 
-
+            // --- Admin ---
             var adminUser = await userManager.FindByEmailAsync(adminEmail);
             if (adminUser == null)
             {
                 adminUser = new ApplicationUser
                 {
-                    UserName = "admin",
+                    UserName = adminEmail,
                     Email = adminEmail,
-                    DisplayName = "Admin"
+                    DisplayName = "Admin",
+                    EmailConfirmed = true,
+                    LockoutEnabled = false
                 };
-                await userManager.CreateAsync(adminUser, adminPassword);
+
+                var result = await userManager.CreateAsync(adminUser, adminPassword);
+                if (!result.Succeeded)
+                    throw new Exception("Failed to create admin user.");
+            }
+            else
+            {
+                adminUser.EmailConfirmed = true;
+                adminUser.LockoutEnabled = false;
+                await userManager.UpdateAsync(adminUser);
             }
 
             if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
-            {
                 await userManager.AddToRoleAsync(adminUser, "Admin");
-            }
-           
 
+            // --- Demo User ---
             var demoUser = await userManager.FindByEmailAsync(demoEmail);
             if (demoUser == null)
             {
                 demoUser = new ApplicationUser
                 {
-                    UserName = "demoUser",
+                    UserName = demoEmail,
                     Email = demoEmail,
-                    DisplayName = "Demo User"
+                    DisplayName = "Demo User",
+                    EmailConfirmed = true,
+                    LockoutEnabled = false
                 };
-                await userManager.CreateAsync(demoUser, demoPassword);
+
+                var result = await userManager.CreateAsync(demoUser, demoPassword);
+                if (!result.Succeeded)
+                    throw new Exception("Failed to create demo user.");
+            }
+            else
+            {
+                demoUser.EmailConfirmed = true;
+                demoUser.LockoutEnabled = false;
+                await userManager.UpdateAsync(demoUser);
             }
 
             if (!await userManager.IsInRoleAsync(demoUser, "User"))
-            {
                 await userManager.AddToRoleAsync(demoUser, "User");
-            }
 
-
+            // --- Genres ---
             if (!context.Genres.Any())
             {
                 context.Genres.AddRange(
@@ -100,7 +99,7 @@ namespace SocialNetworkMusician.Data.SeedData
                 );
             }
 
-
+            // --- Track Categories ---
             if (!context.TrackCategories.Any())
             {
                 context.TrackCategories.AddRange(
@@ -110,7 +109,7 @@ namespace SocialNetworkMusician.Data.SeedData
                 );
             }
 
-
+            // --- First Track ---
             if (!context.MusicTracks.Any())
             {
                 context.MusicTracks.Add(new MusicTrack
@@ -124,7 +123,8 @@ namespace SocialNetworkMusician.Data.SeedData
             }
 
             await context.SaveChangesAsync();
-        
         }
+
+        public static async Task InitializeAsync(IServiceProvider serviceProvider) { }
     }
 }
