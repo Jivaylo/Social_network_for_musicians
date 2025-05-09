@@ -13,8 +13,8 @@ namespace SocialNetworkMusician.Data.SeedData
     {
         public static async Task InitializeAsync(IServiceProvider serviceProvider)
         { }
-        private const string adminEmail = "asasasa@asas.sa";
-        private const string adminPassword = "Ivo123@";
+        private const string adminEmail = "admin@music.com";
+        private const string adminPassword = "Admin123!";
         private const string demoEmail = "user@music.com";
         private const string demoPassword = "User123!";
 
@@ -59,7 +59,7 @@ namespace SocialNetworkMusician.Data.SeedData
             {
                 adminUser = new ApplicationUser
                 {
-                    UserName = "admin",
+                    UserName = adminEmail,
                     Email = adminEmail,
                     DisplayName = "Admin"
                 };
@@ -85,7 +85,7 @@ namespace SocialNetworkMusician.Data.SeedData
             {
                 demoUser = new ApplicationUser
                 {
-                    UserName = "demoUser",
+                    UserName = demoEmail,
                     Email = demoEmail,
                     DisplayName = "Demo User"
                 };
