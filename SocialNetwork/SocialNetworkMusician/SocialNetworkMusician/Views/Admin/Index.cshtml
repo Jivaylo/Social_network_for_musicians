@@ -69,21 +69,7 @@
                 <td>
                     <div class="d-flex flex-wrap gap-2">
 
-                       
-                        @if (!user.IsAdmin)
-                        {
-                            <form asp-action="PromoteToAdmin" method="post">
-                                <input type="hidden" name="userId" value="@user.Id" />
-                                <button class="btn btn-sm btn-outline-success px-3">👑 Promote Admin</button>
-                            </form>
-                        }
-                        else
-                        {
-                            <form asp-action="UnpromoteFromAdmin" method="post">
-                                <input type="hidden" name="userId" value="@user.Id" />
-                                <button class="btn btn-sm btn-outline-secondary px-3">⬇️ Unpromote Admin</button>
-                            </form>
-                        }
+                      
 
 
                         @if (!user.IsAdmin)

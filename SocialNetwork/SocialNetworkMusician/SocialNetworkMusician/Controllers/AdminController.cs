@@ -28,12 +28,7 @@ namespace SocialNetworkMusician.Controllers
             return View(viewModels);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> PromoteToAdmin(string userId)
-        {
-            await _adminService.PromoteToAdminAsync(userId);
-            return RedirectToAction(nameof(Index));
-        }
+
 
         [HttpPost]
         public async Task<IActionResult> BanUser(string userId)
@@ -62,12 +57,7 @@ namespace SocialNetworkMusician.Controllers
             return RedirectToAction("Index");
         }
 
-        [HttpPost]
-        public async Task<IActionResult> UnpromoteFromAdmin(string userId)
-        {
-            await _adminService.UnpromoteFromAdminAsync(userId);
-            return RedirectToAction("Index");
-        }
+     
         [HttpPost]
         public async Task<IActionResult> UnpromoteFromModerator(string userId)
         {
